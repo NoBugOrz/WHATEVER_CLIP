@@ -1,0 +1,31 @@
+CACHE_DIR: 'cache'
+OUTPUT: 'output_test_tip.csv'
+
+DATA:
+    ROOT: 'E:/essay/FROSTER-main/TBAD_evaluation/TBAD/TBAD/'
+    TRAIN_FILE: 'dataset/TBAD/train_files/train_1shots.txt'
+    TEST_FILE: 'dataset/TBAD/train_files/train_1shots.txt'
+    DATASET: TBAD-8
+    NUM_FRAMES: 8
+    NUM_CLASSES: 8
+    CLASS_NAMES: 'dataset/TBAD/class_names.json'
+    SHOTS: 8
+MODEL:
+    ARCH: ViT-B/16
+    YOLO: 'Yolo-model/yolov8n.pt'
+    IF_TEACHER: 1
+    ZS: 0
+    LABEL_SMOOTH: 1
+    TEMPORAL_POOLING: 'attention'
+    LP: 1
+    USE_DISTILLATION: 1
+TRAIN:
+    BATCH_SIZE: 3 # BS 64
+    ACCUMULATION_STEPS: 2
+    EPOCHS: 10
+    LR: 0.001
+TEXT_PROMPT:
+    N_CTX_PRE: 8
+    CTX_PRE_INIT: "x x x x x x x x"
+    N_CTX_POST: 3
+    CTX_POST_INIT: "x x x"
