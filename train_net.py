@@ -50,7 +50,7 @@ def train(cfg, logger, train_loader, student_model, teacher_model=None):
     for cur_epoch in range(cfg.TRAIN.EPOCHS):
         loss_list = []
         for idx, batch_data in enumerate(tqdm(train_loader)):
-            images, labels = extract_from_batch_data(batch_data,device) # images: tensor shape=[*, c, h, w]
+            images, labels = extract_from_batch_data(batch_data,device) # images: tensor shape=[*, c, h, w],labels tensor shape=[bz]
             image_features, text_features, logits = student_model(images)
             #save_image(images)
             preds = torch.argmax(logits, dim=1)

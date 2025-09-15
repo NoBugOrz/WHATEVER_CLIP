@@ -95,6 +95,7 @@ class ImageEncoder(nn.Module):
         video_encode = video_encode.reshape(self.batch_size, self.output_dim, -1).permute(0, 2, 1) # shape = [bz, num_frames, output_dim]
         video_encode = self.linear(video_encode)
         #print(self.linear.weight)
+        #TODO 直接mean_pooling效果不行，找一个可以结合时空信息的模块
         video_encode = video_encode.mean(dim=1)
         return video_encode
 
