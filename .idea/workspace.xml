@@ -5,18 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0e4664fb-eeaf-44ee-bced-984e4873dfb4" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/WHATEVER_CLIP.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/WHATEVER_CLIP.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/temp-model.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/preprocess_frames.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/TBAD_L14.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/TBAD_L14.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/TBAD/test_class_names.json" beforeDir="false" afterPath="$PROJECT_DIR$/dataset/TBAD/test_class_names.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/log_rank0.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logs/log_rank0.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/segment-anything" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/raw_clip_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/raw_clip_test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/show_image.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/show_image.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/teacher_detection/tld.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/teacher_detection/tld.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_net.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_net.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +40,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Python._main.executor": "Run",
+    "Python._main.executor": "Debug",
     "Python.main.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -158,6 +154,7 @@
       <workItem from="1758164496808" duration="143000" />
       <workItem from="1758164665829" duration="110000" />
       <workItem from="1758164782698" duration="1796000" />
+      <workItem from="1758380262772" duration="2778000" />
     </task>
     <servers />
   </component>
@@ -169,18 +166,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/train_net.py</url>
-          <line>58</line>
+          <line>59</line>
           <option name="timeStamp" value="25" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/train_net.py</url>
-          <line>53</line>
-          <option name="timeStamp" value="26" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/train_net.py</url>
-          <line>49</line>
-          <option name="timeStamp" value="28" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/raw_clip_test.py</url>
@@ -191,6 +178,21 @@
           <url>file://$PROJECT_DIR$/utils/raw_clip_test.py</url>
           <line>19</line>
           <option name="timeStamp" value="32" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/train_net.py</url>
+          <line>56</line>
+          <option name="timeStamp" value="33" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/train_net.py</url>
+          <line>55</line>
+          <option name="timeStamp" value="35" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/models/teacher_detection/tld.py</url>
+          <line>41</line>
+          <option name="timeStamp" value="39" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -209,6 +211,6 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/temp_model$main.coverage" NAME="main 覆盖结果" MODIFIED="1758092924077" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="E:\python projects\temp-model" />
-    <SUITE FILE_PATH="coverage/temp_model$_main.coverage" NAME="_main 覆盖结果" MODIFIED="1758165934831" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="E:\python projects\temp-model" />
+    <SUITE FILE_PATH="coverage/temp_model$_main.coverage" NAME="_main 覆盖结果" MODIFIED="1758381820674" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="E:\python projects\temp-model" />
   </component>
 </project>

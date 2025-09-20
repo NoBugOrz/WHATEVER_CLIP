@@ -4,7 +4,7 @@ from timm.loss import LabelSmoothingCrossEntropy
 from tqdm import tqdm
 from utils import show_image
 
-from utils.show_image import save_image
+from utils.show_image import save_image,show_image
 
 def extract_from_batch_data(batch_data,device):
     '''
@@ -53,6 +53,7 @@ def train(cfg, logger, train_loader, student_model, teacher_model=None):
             images, labels = extract_from_batch_data(batch_data,device) # images: tensor shape=[*, c, h, w],labels tensor shape=[bz]
             image_features, text_features, logits = student_model(images)
             #save_image(images)
+            show_image(images)
             preds = torch.argmax(logits, dim=1)
 
 

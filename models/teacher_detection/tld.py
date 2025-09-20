@@ -4,6 +4,7 @@ from ultralytics import YOLO
 
 import json
 import cv2
+from utils.show_image import save_image,show_image
 
 # Load the track id from the file
 class TeacherDetection(nn.Module):
@@ -38,7 +39,7 @@ class TeacherDetection(nn.Module):
 
         # Crop the image according to the large box
         cropped_image = image[int(large_box[1]):int(large_box[3]), int(large_box[0]):int(large_box[2])]
-
+        show_image(cropped_image)
         return cropped_image
 
     @staticmethod

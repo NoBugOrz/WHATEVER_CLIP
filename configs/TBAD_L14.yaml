@@ -8,7 +8,7 @@ DATA:
     DATASET: TBAD-8
     NUM_FRAMES: 8
     NUM_CLASSES: 8
-    CLASS_NAMES: 'dataset/TBAD/class_names.json'
+    CLASS_NAMES: 'dataset/TBAD/test_class_names.json'
     SHOTS: 8
 MODEL:
     ARCH: ViT-B/16
