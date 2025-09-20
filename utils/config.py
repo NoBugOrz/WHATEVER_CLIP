@@ -27,7 +27,7 @@ _C.DATA.SHOTS = 2
 # Model settings
 # -----------------------------------------------------------------------------
 _C.MODEL = CN()
-_C.MODEL.ARCH = 'ViT-B/32'
+_C.MODEL.ARCH = 'ViT-B/16'
 _C.MODEL.YOLO = 'Yolo-model/yolov8n.pt'
 # If using the teacher detection model
 _C.MODEL.IF_TEACHER = 1

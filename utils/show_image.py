@@ -78,7 +78,7 @@ def show_image(img, normalize=True):
             img_np = img_np.squeeze(2)
 
         plt.imshow(img_np)
-
+        plt.show()
 
     return img
 
