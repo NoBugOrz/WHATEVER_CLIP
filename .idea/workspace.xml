@@ -120,8 +120,8 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python._main" />
       <item itemvalue="Python.main" />
+      <item itemvalue="Python._main" />
     </list>
   </component>
   <component name="SharedIndexes">
