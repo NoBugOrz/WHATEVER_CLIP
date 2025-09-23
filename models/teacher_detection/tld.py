@@ -39,7 +39,7 @@ class TeacherDetection(nn.Module):
 
         # Crop the image according to the large box
         cropped_image = image[int(large_box[1]):int(large_box[3]), int(large_box[0]):int(large_box[2])]
-        show_image(cropped_image)
+
         return cropped_image
 
     @staticmethod

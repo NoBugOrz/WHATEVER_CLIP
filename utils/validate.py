@@ -2,6 +2,7 @@ import torch
 from utils.tools import AverageMeter, classes, visual
 import numpy as np
 from sklearn.metrics import roc_auc_score, f1_score
+import matplotlib.pyplot as plt
 
 @torch.no_grad()
 def validate(output, label, plot = False):

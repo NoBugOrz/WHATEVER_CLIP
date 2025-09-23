@@ -6,6 +6,21 @@ from models.clip.clip import tokenize
 from ultralytics import cfg
 
 
+class multi_level_conv(nn.Module):
+    def __init__(self,input_dim,output_dim,device):
+        self.device = device
+        self.input_dim = input_dim
+        self.output_dim = output_dim
+
+
+    def init_convs(self):
+        pass
+    
+    def forward(self, x):
+        pass
+
+
+
 class xxx_clip(nn.Module):
     def __init__(self, config, device):
         super().__init__()
@@ -92,9 +107,8 @@ class ImageEncoder(nn.Module):
             video_encode: tensor shape [bz, output_dim]  (not yet normalized)
         '''
         video_encode = self.clip_model.encode_image(x)
-        video_encode = video_encode.reshape(self.batch_size, self.output_dim, -1).permute(0, 2, 1) # shape = [bz, num_frames, output_dim]
-        video_encode = self.linear(video_encode)
-        #print(self.linear.weight)
+        video_encode = video_encode.reshape(self.batch_size, -1, self.output_dim) # shape = [bz * num_frames, output_dim]
+
         #TODO 直接mean_pooling效果不行，找一个可以结合时空信息的模块
         video_encode = video_encode.mean(dim=1)
         return video_encode

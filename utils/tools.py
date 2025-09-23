@@ -213,3 +213,4 @@ def visual(config, path ,logits):
     for i, frame in enumerate(frames):
         video_name = path.split('/')[-1].split('.')[0]
         cv2.imwrite(f'output/{video_name}_frame_orign_{i}.jpg', frame)
+
