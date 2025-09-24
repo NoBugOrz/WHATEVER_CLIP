@@ -47,11 +47,10 @@ def test(cfg, logger, test_loader, student_model):
 
         label_list.append(labels)
         logit_dic['model_logits'].append(logits)
-        
-        preds = torch.argmax(probs, dim=1)
+
 
     labels = torch.cat(label_list)
     logit_dic['model_logits'] = torch.cat(logit_dic['model_logits'])
 
-    acc1, acc3, acc5, auc, f1 = validate(logit_dic['model_logits'], labels, plot=False, acc_only = True)
-    
+    acc1, acc3, acc5, auc, f1 = validate(logit_dic['model_logits'], labels, plot=False, acc_only = False)
+    print(111)

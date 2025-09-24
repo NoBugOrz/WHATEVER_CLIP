@@ -43,10 +43,11 @@ def main(cfg, logger):
     logger.info('loading dataloaders...')
     train_data, test_data, train_loader, test_loader = build_dataloader(cfg, logger)
     # test_raw_clip(cfg, logger, train_loader, raw_clip, student_model)
-    train(cfg, logger, train_loader, student_model, teacher_model=raw_clip)
-    test(cfg, logger, student_model, raw_clip)
+    # train(cfg, logger, train_loader, student_model, teacher_model=raw_clip)
+    test(cfg, logger, test_loader, student_model)
 
 if __name__ == '__main__':
+    torch.cuda.empty_cache()
     args, cfg = parse_option()
     logger = create_logger('logs')
     logger.info("Running with config:")
