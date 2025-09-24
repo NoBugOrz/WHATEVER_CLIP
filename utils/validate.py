@@ -5,7 +5,7 @@ from sklearn.metrics import roc_auc_score, f1_score
 import matplotlib.pyplot as plt
 
 @torch.no_grad()
-def validate(output, label, plot = False):
+def validate(output, label, plot = False, acc_only = True):
     acc1_meter, acc5_meter,acc3_meter = AverageMeter(), AverageMeter(), AverageMeter()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     label = label.clone().detach().to(device)
@@ -44,11 +44,16 @@ def validate(output, label, plot = False):
                     sum += num
             probs[min_index] = 1 - sum
         all_probs.append(probs)
+
+    if acc_only:
+        return acc1_meter.avg, acc3_meter.avg, acc5_meter.avg
+
     # AUC and F1
-    all_labels = np.array(all_labels)
+    all_labels = np.array(all_labels) # [np.array(bz)]
     all_preds = np.array(all_preds)
-    all_probs = np.array(all_probs)
-    auc = roc_auc_score(all_labels, all_probs, multi_class='ovr')
+    all_probs = np.array(all_probs) # [np.array(bz, num_cls)]
+
+    auc = roc_auc_score(y_true=all_labels, y_score=all_probs, multi_class='ovo')
     f1 = f1_score(all_labels, all_preds, average='macro')
     if plot:
         cls = classes(config)

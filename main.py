@@ -40,8 +40,6 @@ def main(cfg, logger):
     logger.info('building xxx_model...')
     student_model = xxx_clip(cfg,device)
 
-
-
     logger.info('loading dataloaders...')
     train_data, test_data, train_loader, test_loader = build_dataloader(cfg, logger)
     # test_raw_clip(cfg, logger, train_loader, raw_clip, student_model)
