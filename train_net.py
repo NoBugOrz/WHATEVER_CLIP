@@ -84,6 +84,6 @@ def train(cfg, logger, train_loader, student_model, teacher_model=None):
                     f" acc1:{np.array(acc_dic['acc1']).mean():.4f},"
                     f" acc3:{np.array(acc_dic['acc3']).mean():.4f},"
                     f" acc5:{np.array(acc_dic['acc5']).mean():.4f}")
-
+        print(1)
 
 
