@@ -8,7 +8,7 @@ import torch
 from models.xxx_clip import xxx_clip,get_clip
 from train_net import train
 from utils.raw_clip_test import test_raw_clip
-
+from test_net import test
 
 def parse_option():
     parser = argparse.ArgumentParser()
@@ -44,7 +44,7 @@ def main(cfg, logger):
     train_data, test_data, train_loader, test_loader = build_dataloader(cfg, logger)
     # test_raw_clip(cfg, logger, train_loader, raw_clip, student_model)
     train(cfg, logger, train_loader, student_model, teacher_model=raw_clip)
-
+    test(cfg, logger, student_model, raw_clip)
 
 if __name__ == '__main__':
     args, cfg = parse_option()
