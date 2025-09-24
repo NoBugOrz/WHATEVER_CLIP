@@ -39,12 +39,19 @@ def test(cfg, logger, test_loader, student_model):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
-    for cur_epoch in range(cfg.TRAIN.EPOCHS):
-        loss_list = []
-        for idx, batch_data in enumerate(tqdm(test_loader)):
-            images, labels = extract_from_batch_data(batch_data,device) # images: tensor shape=[*, c, h, w],labels tensor shape=[bz]
-            image_features, text_features, logits = student_model(images)
-            probs = logits.softmax(dim=-1)
-            #save_image(images)
-            show_image(images)
-            preds = torch.argmax(probs, dim=1)
+    logit_dic = {'model_logits':[]}
+    label_list = []
+    for idx, batch_data in enumerate(tqdm(test_loader)):
+        images, labels = extract_from_batch_data(batch_data,device) # images: tensor shape=[*, c, h, w],labels tensor shape=[bz]
+        image_features, text_features, logits = student_model(images)
+
+        label_list.append(labels)
+        logit_dic['model_logits'].append(logits)
+        
+        preds = torch.argmax(probs, dim=1)
+
+    labels = torch.cat(label_list)
+    logit_dic['model_logits'] = torch.cat(logit_dic['model_logits'])
+
+    acc1, acc3, acc5, auc, f1 = validate(logit_dic['model_logits'], labels, plot=False, acc_only = True)
+    

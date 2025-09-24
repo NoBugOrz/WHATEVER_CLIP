@@ -11722,3 +11722,47 @@ TRAIN:
 [2025-09-24 12:09:22 root] (train_net.py 83): INFO In epoch:7, loss:2.08056640625 acc1:16.6667, acc3:33.3333, acc5:66.6667
 [2025-09-24 12:09:32 root] (train_net.py 83): INFO In epoch:8, loss:2.0771484375 acc1:16.6667, acc3:33.3333, acc5:66.6667
 [2025-09-24 12:09:42 root] (train_net.py 83): INFO In epoch:9, loss:2.076171875 acc1:16.6667, acc3:33.3333, acc5:66.6667
+[2025-09-24 13:04:08 root] (main.py 52): INFO Running with config:
+[2025-09-24 13:04:08 root] (main.py 53): INFO BASE: ['E:/python projects/temp-model']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: E:/essay/FROSTER-main/TBAD_evaluation/TBAD/TBAD/
+  SHOTS: 8
+  TEST_FILE: dataset/TBAD/train_files/train_1shots.txt
+  TRAIN_FILE: dataset/TBAD/train_files/train_1shots.txt
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 3
+  EPOCHS: 10
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-09-24 13:04:08 root] (main.py 35): INFO loading raw_clip...
+[2025-09-24 13:04:09 root] (main.py 40): INFO building xxx_model...
+[2025-09-24 13:04:10 root] (main.py 43): INFO loading dataloaders...
+[2025-09-24 13:04:14 root] (build.py 153): INFO test_data_finished!
