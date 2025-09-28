@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d5128051-8c66-40cb-a452-a7f5ca60cf8e" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/logs/log_rank0.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logs/log_rank0.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_net.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_net.py" afterDir="false" />
-    </list>
+    <list default="true" id="d5128051-8c66-40cb-a452-a7f5ca60cf8e" name="更改" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
