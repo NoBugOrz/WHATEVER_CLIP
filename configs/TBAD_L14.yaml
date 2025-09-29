@@ -19,6 +19,7 @@ MODEL:
     TEMPORAL_POOLING: 'attention'
     LP: 1
     USE_DISTILLATION: 1
+    Tip_Adapter: 1
 TRAIN:
     BATCH_SIZE: 3 # BS 64
     ACCUMULATION_STEPS: 2

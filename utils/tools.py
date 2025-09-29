@@ -16,7 +16,6 @@ import numpy as np
 import matplotlib
 import clip
 
-
 matplotlib.use('Agg')
 from models.teacher_detection.tld import TeacherDetection
 import matplotlib.pyplot as plt
@@ -214,3 +213,22 @@ def visual(config, path ,logits):
         video_name = path.split('/')[-1].split('.')[0]
         cv2.imwrite(f'output/{video_name}_frame_orign_{i}.jpg', frame)
 
+def save_model(cfg, model):
+    '''
+    save model to cache file
+    '''
+    pass
+
+def extract_from_batch_data(batch_data,device):
+    '''
+    Returns:
+        imgs : tensor of shape (bz * num_frames, C, H, W)
+        labels : list of shape (bz * num_frames)
+    '''
+    images = batch_data['data']
+    images = torch.stack(images)
+    images = torch.transpose(images, 0, 1).to(device)  # [bz, num_frames, 1, c, h, w]
+    images = images.squeeze(2).reshape(-1, 3, 224, 224)
+    label_id = torch.tensor(batch_data['label'],device=device) # list[] len=bz
+    # label_id = torch.tensor(label_id).to(device)
+    return images, label_id

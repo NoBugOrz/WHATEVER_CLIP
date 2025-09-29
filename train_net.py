@@ -7,30 +7,8 @@ from utils import show_image
 
 from utils.show_image import save_image,show_image
 from utils.validate import validate
-
-
-def save_model(cfg, model):
-    '''
-    save model to cache file
-    '''
-    pass
-
-def extract_from_batch_data(batch_data,device):
-    '''
-    Returns:
-        imgs : tensor of shape (bz * num_frames, C, H, W)
-        labels : list of shape (bz * num_frames)
-    '''
-    images = batch_data['data']
-    images = torch.stack(images)
-    images = torch.transpose(images, 0, 1).to(device)  # [bz, num_frames, 1, c, h, w]
-    images = images.squeeze(2).reshape(-1, 3, 224, 224)
-    label_id = torch.tensor(batch_data['label'],device=device) # list[] len=bz
-    # label_id = torch.tensor(label_id).to(device)
-    return images, label_id
-
-
-
+from utils.tools import save_model
+from utils.tools import extract_from_batch_data
 
 def train(cfg, logger, train_loader, student_model, teacher_model=None):
     '''
@@ -40,6 +18,7 @@ def train(cfg, logger, train_loader, student_model, teacher_model=None):
 
     if teacher_model is not None:
         logger.info('Use distillation in training')
+        teacher_model = teacher_model.to(student_model.device) # make sure both models are on the same device
         teacher_model.eval()
 
     student_model.train()
@@ -65,7 +44,7 @@ def train(cfg, logger, train_loader, student_model, teacher_model=None):
             images, labels = extract_from_batch_data(batch_data,device) # images: tensor shape=[*, c, h, w],labels tensor shape=[bz]
             image_features, text_features, logits = student_model(images)
             probs = logits.softmax(dim=-1)
-            #save_image(images)
+            # save_image(images)
             # show_image(images)
             preds = torch.argmax(probs, dim=1)
             acc1, acc3, acc5 = validate(probs, labels,acc_only=True)
