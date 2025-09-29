@@ -105,6 +105,8 @@ def update_config(config, args):
         config.MODEL.LP = args.lp
     if hasattr(args, 'label_smooth') and args.label_smooth is not None:
         config.MODEL.LABEL_SMOOTH = args.label_smooth
+    if hasattr(args, 'Tip_Adapter') and args.Tip_Adapter is not None:
+        config.MODEL.Tip_Adapter = args.Tip_Adapter
     # set local rank for distributed training
     config.freeze()
 
