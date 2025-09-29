@@ -61,14 +61,14 @@ def run_tip_adapter_F(cfg, cache_keys, cache_values, val_features, val_labels, t
         tip_logits = clip_logits + cache_logits * alpha
         acc = cls_acc(tip_logits, test_labels)
 
-        print("**** Tip-Adapter-F's test accuracy: {:.2f}. ****\n".format(acc))
+        print("**** tip_adapter-F's test accuracy: {:.2f}. ****\n".format(acc))
         if acc > best_acc:
             best_acc = acc
             best_epoch = train_idx
             torch.save(adapter.weight, cfg['cache_dir'] + "/best_F_" + str(cfg['shots']) + "shots.pt")
 
     adapter.weight = torch.load(cfg['cache_dir'] + "/best_F_" + str(cfg['shots']) + "shots.pt")
-    print(f"**** After fine-tuning, Tip-Adapter-F's best test accuracy: {best_acc:.2f}, at epoch: {best_epoch}. ****\n")
+    print(f"**** After fine-tuning, tip_adapter-F's best test accuracy: {best_acc:.2f}, at epoch: {best_epoch}. ****\n")
 
     print("\n-------- Searching hyperparameters on the val set. --------")
 
@@ -83,4 +83,4 @@ def run_tip_adapter_F(cfg, cache_keys, cache_values, val_features, val_labels, t
 
     tip_logits = clip_logits + cache_logits * best_alpha
     acc = cls_acc(tip_logits, test_labels)
-    print("**** Tip-Adapter-F's test accuracy: {:.2f}. ****\n".format(max(best_acc, acc)))
+    print("**** tip_adapter-F's test accuracy: {:.2f}. ****\n".format(max(best_acc, acc)))

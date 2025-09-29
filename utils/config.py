@@ -64,6 +64,18 @@ _C.TEXT_PROMPT.N_CTX_PRE = 9
 _C.TEXT_PROMPT.CTX_PRE_INIT = "The action of the person in the picture is"
 _C.TEXT_PROMPT.N_CTX_POST = 3
 _C.TEXT_PROMPT.CTX_POST_INIT = "in the classroom"
+# -----------------------------------------------------------------------------
+# Tip Adapter Settings
+# -----------------------------------------------------------------------------
+_C.TIP_ADAPTER = CN()
+# if using tip_adapter in training
+_C.TIP_ADAPTER.USE_TIP_ADAPTER = 1
+_C.TIP_ADAPTER.INIT_ALPHA = 1
+_C.TIP_ADAPTER.INIT_BETA = 1
+# if loading cached kv
+_C.TIP_ADAPTER.LOAD_CACHE = 0
+_C.TIP_ADAPTER.DATA_FILE = ''
+_C.TIP_ADAPTER.AUG_EPOCH = 1
 
 def _update_config_from_file(config, cfg_file):
     config.defrost()
@@ -105,8 +117,7 @@ def update_config(config, args):
         config.MODEL.LP = args.lp
     if hasattr(args, 'label_smooth') and args.label_smooth is not None:
         config.MODEL.LABEL_SMOOTH = args.label_smooth
-    if hasattr(args, 'Tip_Adapter') and args.Tip_Adapter is not None:
-        config.MODEL.Tip_Adapter = args.Tip_Adapter
+
     # set local rank for distributed training
     config.freeze()
 

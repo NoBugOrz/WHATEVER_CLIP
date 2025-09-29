@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import torch.nn as nn
 
 import clip
-
+from utils.tools import extract_from_batch_data
 
 def cls_acc(output, target, topk=1):
     pred = output.topk(topk, 1, True, True)[1].t()
@@ -16,17 +16,19 @@ def cls_acc(output, target, topk=1):
 
 
 def build_cache_model(cfg, clip_model, train_loader_cache):
-    if cfg['load_cache'] == False:
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    if cfg.TIP_ADAPTER.LOAD_CACHE == False:
         cache_keys = []
         cache_values = []
 
         with torch.no_grad():
             # Data augmentation for the cache model
-            for augment_idx in range(cfg['augment_epoch']):
+            for augment_idx in range(cfg.TIP_ADAPTER.AUG_EPOCH):
                 train_features = []
 
-                print('Augment Epoch: {:} / {:}'.format(augment_idx, cfg['augment_epoch']))
-                for i, (images, target) in enumerate(tqdm(train_loader_cache)):
+                print('Augment Epoch: {:} / {:}'.format(augment_idx, cfg.TIP_ADAPTER.AUG_EPOCH))
+                for i,batch_data  in enumerate(tqdm(train_loader_cache)):
+                    images, target = extract_from_batch_data(batch_data,device)
                     images = images.cuda()
                     image_features = clip_model.encode_image(images)
                     train_features.append(image_features)
@@ -40,12 +42,12 @@ def build_cache_model(cfg, clip_model, train_loader_cache):
         cache_keys = cache_keys.permute(1, 0)
         cache_values = F.one_hot(torch.cat(cache_values, dim=0)).half()
 
-        torch.save(cache_keys, cfg['cache_dir'] + '/keys_' + str(cfg['shots']) + "shots.pt")
-        torch.save(cache_values, cfg['cache_dir'] + '/values_' + str(cfg['shots']) + "shots.pt")
+        torch.save(cache_keys, cfg.CACHE_DIR + '/keys_' + str(cfg.DATA.SHOTS) + "shots.pt")
+        torch.save(cache_values, cfg.CACHE_DIR + '/values_' + str(cfg.DATA.SHOTS) + "shots.pt")
 
     else:
-        cache_keys = torch.load(cfg['cache_dir'] + '/keys_' + str(cfg['shots']) + "shots.pt")
-        cache_values = torch.load(cfg['cache_dir'] + '/values_' + str(cfg['shots']) + "shots.pt")
+        cache_keys = torch.load(cfg.CACHE_DIR + '/keys_' + str(cfg.DATA.SHOTS) + "shots.pt")
+        cache_values = torch.load(cfg.CACHE_DIR + '/values_' + str(cfg.DATA.SHOTS) + "shots.pt")
 
     return cache_keys, cache_values
 

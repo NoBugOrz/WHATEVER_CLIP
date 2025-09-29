@@ -12036,3 +12036,503 @@ TRAIN:
 [2025-09-24 14:04:24 root] (main.py 43): INFO loading dataloaders...
 [2025-09-24 14:04:28 root] (build.py 153): INFO test_data_finished!
 [2025-09-24 14:04:31 root] (test_net.py 32): INFO testing model on data from path:dataset/TBAD/train_files/train_1shots.txt
+[2025-09-29 17:36:36 root] (main.py 54): INFO Running with config:
+[2025-09-29 17:36:36 root] (main.py 55): INFO BASE: ['E:/python projects/temp-model']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: E:/essay/FROSTER-main/TBAD_evaluation/TBAD/TBAD/
+  SHOTS: 8
+  TEST_FILE: dataset/TBAD/train_files/train_1shots.txt
+  TRAIN_FILE: dataset/TBAD/train_files/train_1shots.txt
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  Tip_Adapter: 1
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 3
+  EPOCHS: 10
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-09-29 17:36:36 root] (main.py 36): INFO loading raw_clip...
+[2025-09-29 17:36:37 root] (main.py 40): INFO BASE: ['E:/python projects/temp-model']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: E:/essay/FROSTER-main/TBAD_evaluation/TBAD/TBAD/
+  SHOTS: 8
+  TEST_FILE: dataset/TBAD/train_files/train_1shots.txt
+  TRAIN_FILE: dataset/TBAD/train_files/train_1shots.txt
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  Tip_Adapter: 1
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 3
+  EPOCHS: 10
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-09-29 17:36:37 root] (main.py 41): INFO building xxx_model...
+[2025-09-29 17:36:39 root] (main.py 44): INFO loading dataloaders...
+[2025-09-29 17:36:43 root] (build.py 153): INFO test_data_finished!
+[2025-09-29 17:36:45 root] (test_net.py 15): INFO testing model on data from path:dataset/TBAD/train_files/train_1shots.txt
+[2025-09-29 17:37:44 root] (main.py 54): INFO Running with config:
+[2025-09-29 17:37:44 root] (main.py 55): INFO BASE: ['E:/python projects/temp-model']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: E:/essay/FROSTER-main/TBAD_evaluation/TBAD/TBAD/
+  SHOTS: 8
+  TEST_FILE: dataset/TBAD/train_files/train_1shots.txt
+  TRAIN_FILE: dataset/TBAD/train_files/train_1shots.txt
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  Tip_Adapter: 1
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 3
+  EPOCHS: 10
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-09-29 17:37:44 root] (main.py 36): INFO loading raw_clip...
+[2025-09-29 17:37:46 root] (main.py 41): INFO building xxx_model...
+[2025-09-29 17:37:47 root] (main.py 44): INFO loading dataloaders...
+[2025-09-29 17:37:51 root] (build.py 153): INFO test_data_finished!
+[2025-09-29 17:37:53 root] (train_net.py 17): INFO training model on data from path:dataset/TBAD/train_files/train_1shots.txt
+[2025-09-29 17:37:53 root] (train_net.py 20): INFO Use distillation in training
+[2025-09-29 17:37:53 root] (train_net.py 34): INFO total trainable parameters:
+[2025-09-29 17:38:04 root] (train_net.py 62): INFO In epoch:0, loss:2.05078125 acc1:16.6667, acc3:33.3333, acc5:50.0000
+[2025-09-29 17:38:15 root] (train_net.py 62): INFO In epoch:1, loss:2.1103515625 acc1:16.6667, acc3:50.0000, acc5:66.6667
+[2025-09-29 17:38:26 root] (train_net.py 62): INFO In epoch:2, loss:2.2177734375 acc1:0.0000, acc3:16.6667, acc5:66.6667
+[2025-09-29 17:45:07 root] (main.py 54): INFO Running with config:
+[2025-09-29 17:45:07 root] (main.py 55): INFO BASE: ['E:/python projects/temp-model']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: E:/essay/FROSTER-main/TBAD_evaluation/TBAD/TBAD/
+  SHOTS: 8
+  TEST_FILE: dataset/TBAD/train_files/train_1shots.txt
+  TRAIN_FILE: dataset/TBAD/train_files/train_1shots.txt
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  Tip_Adapter: 1
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+  init_alpta: 1
+  init_beta: 1
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 3
+  EPOCHS: 10
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-09-29 17:45:07 root] (main.py 36): INFO loading raw_clip...
+[2025-09-29 17:45:09 root] (main.py 41): INFO building xxx_model...
+[2025-09-29 17:45:10 root] (main.py 44): INFO loading dataloaders...
+[2025-09-29 19:40:07 root] (main.py 53): INFO Running with config:
+[2025-09-29 19:40:07 root] (main.py 54): INFO BASE: ['E:/python projects/temp-model']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: E:/essay/FROSTER-main/TBAD_evaluation/TBAD/TBAD/
+  SHOTS: 8
+  TEST_FILE: dataset/TBAD/train_files/train_1shots.txt
+  TRAIN_FILE: dataset/TBAD/train_files/train_1shots.txt
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  DATA_FILE: dataset/TBAD/train_files/tip_1shots.txt
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 3
+  EPOCHS: 10
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-09-29 19:40:07 root] (main.py 35): INFO loading raw_clip...
+[2025-09-29 19:40:09 root] (main.py 40): INFO building xxx_model...
+[2025-09-29 19:49:06 root] (main.py 53): INFO Running with config:
+[2025-09-29 19:49:06 root] (main.py 54): INFO BASE: ['E:/python projects/temp-model']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: E:/essay/FROSTER-main/TBAD_evaluation/TBAD/TBAD/
+  SHOTS: 8
+  TEST_FILE: dataset/TBAD/train_files/train_1shots.txt
+  TRAIN_FILE: dataset/TBAD/train_files/train_1shots.txt
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  DATA_FILE: dataset/TBAD/train_files/tip_1shots.txt
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 3
+  EPOCHS: 10
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-09-29 19:49:06 root] (main.py 35): INFO loading raw_clip...
+[2025-09-29 19:49:07 root] (main.py 40): INFO building xxx_model...
+[2025-09-29 19:49:08 root] (main.py 43): INFO loading dataloaders...
+[2025-09-29 19:49:10 root] (build.py 149): INFO use tip adapter in training
+[2025-09-29 19:50:31 root] (main.py 53): INFO Running with config:
+[2025-09-29 19:50:31 root] (main.py 54): INFO BASE: ['E:/python projects/temp-model']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: E:/essay/FROSTER-main/TBAD_evaluation/TBAD/TBAD/
+  SHOTS: 8
+  TEST_FILE: dataset/TBAD/train_files/train_1shots.txt
+  TRAIN_FILE: dataset/TBAD/train_files/train_1shots.txt
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  DATA_FILE: dataset/TBAD/train_files/tip_1shots.txt
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 3
+  EPOCHS: 10
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-09-29 19:50:31 root] (main.py 35): INFO loading raw_clip...
+[2025-09-29 19:50:33 root] (main.py 40): INFO building xxx_model...
+[2025-09-29 19:50:34 root] (main.py 43): INFO loading dataloaders...
+[2025-09-29 19:50:38 root] (build.py 163): INFO test_data_finished!
+[2025-09-29 19:50:40 root] (train_net.py 18): INFO training model on data from path:dataset/TBAD/train_files/train_1shots.txt
+[2025-09-29 19:50:40 root] (train_net.py 21): INFO Use distillation in training
+[2025-09-29 19:50:44 root] (train_net.py 26): INFO Use tip adapter in training
+[2025-09-29 19:50:47 root] (build.py 149): INFO use tip adapter in training
+[2025-09-29 20:16:07 root] (main.py 53): INFO Running with config:
+[2025-09-29 20:16:07 root] (main.py 54): INFO BASE: ['E:/python projects/temp-model']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: E:/essay/FROSTER-main/TBAD_evaluation/TBAD/TBAD/
+  SHOTS: 8
+  TEST_FILE: dataset/TBAD/train_files/train_1shots.txt
+  TRAIN_FILE: dataset/TBAD/train_files/train_1shots.txt
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/tip_1shots.txt
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 3
+  EPOCHS: 10
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-09-29 20:16:07 root] (main.py 35): INFO loading raw_clip...
+[2025-09-29 20:16:09 root] (main.py 40): INFO building xxx_model...
+[2025-09-29 20:16:10 root] (main.py 43): INFO loading dataloaders...
+[2025-09-29 20:16:14 root] (build.py 163): INFO test_data_finished!
+[2025-09-29 20:16:16 root] (train_net.py 18): INFO training model on data from path:dataset/TBAD/train_files/train_1shots.txt
+[2025-09-29 20:16:16 root] (train_net.py 21): INFO Use distillation in training
+[2025-09-29 20:16:26 root] (train_net.py 26): INFO Use tip adapter in training
+[2025-09-29 20:16:28 root] (build.py 149): INFO use tip adapter in training
+[2025-09-29 20:17:08 root] (main.py 53): INFO Running with config:
+[2025-09-29 20:17:08 root] (main.py 54): INFO BASE: ['E:/python projects/temp-model']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: E:/essay/FROSTER-main/TBAD_evaluation/TBAD/TBAD/
+  SHOTS: 8
+  TEST_FILE: dataset/TBAD/train_files/train_1shots.txt
+  TRAIN_FILE: dataset/TBAD/train_files/train_1shots.txt
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/tip_1shots.txt
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 3
+  EPOCHS: 10
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-09-29 20:17:08 root] (main.py 35): INFO loading raw_clip...
+[2025-09-29 20:17:10 root] (main.py 40): INFO building xxx_model...
+[2025-09-29 20:17:11 root] (main.py 43): INFO loading dataloaders...
+[2025-09-29 20:17:15 root] (build.py 163): INFO test_data_finished!
+[2025-09-29 20:17:17 root] (train_net.py 18): INFO training model on data from path:dataset/TBAD/train_files/train_1shots.txt
+[2025-09-29 20:17:17 root] (train_net.py 21): INFO Use distillation in training
+[2025-09-29 20:17:37 root] (train_net.py 26): INFO Use tip adapter in training
+[2025-09-29 20:17:38 root] (build.py 149): INFO use tip adapter in training
+[2025-09-29 20:25:13 root] (main.py 53): INFO Running with config:
+[2025-09-29 20:25:13 root] (main.py 54): INFO BASE: ['E:/python projects/temp-model']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: E:/essay/FROSTER-main/TBAD_evaluation/TBAD/TBAD/
+  SHOTS: 8
+  TEST_FILE: dataset/TBAD/train_files/train_1shots.txt
+  TRAIN_FILE: dataset/TBAD/train_files/train_1shots.txt
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/tip_1shots.txt
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 3
+  EPOCHS: 10
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-09-29 20:25:13 root] (main.py 35): INFO loading raw_clip...
+[2025-09-29 20:25:14 root] (main.py 40): INFO building xxx_model...
+[2025-09-29 20:25:15 root] (main.py 43): INFO loading dataloaders...
+[2025-09-29 20:25:19 root] (build.py 163): INFO test_data_finished!
+[2025-09-29 20:25:22 root] (train_net.py 18): INFO training model on data from path:dataset/TBAD/train_files/train_1shots.txt
+[2025-09-29 20:25:22 root] (train_net.py 21): INFO Use distillation in training
+[2025-09-29 20:25:22 root] (train_net.py 26): INFO Use tip adapter in training
+[2025-09-29 20:25:23 root] (build.py 149): INFO use tip adapter in training

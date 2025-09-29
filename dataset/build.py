@@ -141,9 +141,19 @@ class SubsetRandomSampler(torch.utils.data.Sampler):
     def set_epoch(self, epoch):
         self.epoch = epoch
 
-def build_dataloader(config,logger):
+def build_dataloader(config,logger,is_tip=False):
     device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
     _, preprocess = clip.load(config.MODEL.ARCH, device=device)
+
+    if is_tip:
+        logger.info('use tip adapter in training')
+        tip_data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=config.TIP_ADAPTER.DATA_FILE,
+                                  shot=config.DATA.SHOTS, type='train')
+        sampler_test = SubsetRandomSampler(np.arange(len(tip_data)))
+        tip_loader = DataLoader(tip_data, batch_size=config.TRAIN.BATCH_SIZE, sampler=sampler_test,
+                                  num_workers=12, pin_memory=True, drop_last=True)
+
+        return tip_data, tip_loader
 
     test_data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=config.DATA.TEST_FILE,type='test')
     sampler_test = SubsetRandomSampler(np.arange(len(test_data)))
@@ -158,4 +168,7 @@ def build_dataloader(config,logger):
     train_loader = DataLoader(train_data, batch_size=config.TRAIN.BATCH_SIZE, sampler=sampler_test,
                              num_workers=12, pin_memory=True, drop_last=True)
 
+
     return  train_data, test_data, train_loader , test_loader
+
+

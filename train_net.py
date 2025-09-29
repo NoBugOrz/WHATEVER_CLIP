@@ -4,11 +4,12 @@ import torch.optim as optim
 from timm.loss import LabelSmoothingCrossEntropy
 from tqdm import tqdm
 from utils import show_image
-
 from utils.show_image import save_image,show_image
 from utils.validate import validate
 from utils.tools import save_model
 from utils.tools import extract_from_batch_data
+from models.tip_adapter.utils import build_cache_model
+from dataset.build import build_dataloader
 
 def train(cfg, logger, train_loader, student_model, teacher_model=None):
     '''
@@ -20,6 +21,11 @@ def train(cfg, logger, train_loader, student_model, teacher_model=None):
         logger.info('Use distillation in training')
         teacher_model = teacher_model.to(student_model.device) # make sure both models are on the same device
         teacher_model.eval()
+
+    if cfg.TIP_ADAPTER.USE_TIP_ADAPTER == True:
+        logger.info('Use tip adapter in training')
+        tip_data, tip_loader = build_dataloader(cfg, logger, is_tip=True)
+        build_cache_model(cfg=cfg,clip_model=teacher_model,train_loader_cache=tip_loader)
 
     student_model.train()
     optimizer = torch.optim.Adam(student_model.parameters(), lr=cfg.TRAIN.LR, eps=1e-4)
@@ -63,6 +69,5 @@ def train(cfg, logger, train_loader, student_model, teacher_model=None):
                     f" acc1:{np.array(acc_dic['acc1']).mean():.4f},"
                     f" acc3:{np.array(acc_dic['acc3']).mean():.4f},"
                     f" acc5:{np.array(acc_dic['acc5']).mean():.4f}")
-        print(1)
 
 

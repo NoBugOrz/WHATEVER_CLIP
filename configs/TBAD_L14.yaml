@@ -19,7 +19,6 @@ MODEL:
     TEMPORAL_POOLING: 'attention'
     LP: 1
     USE_DISTILLATION: 1
-    Tip_Adapter: 1
 TRAIN:
     BATCH_SIZE: 3 # BS 64
     ACCUMULATION_STEPS: 2
@@ -30,3 +29,11 @@ TEXT_PROMPT:
     CTX_PRE_INIT: "x x x x x x x x"
     N_CTX_POST: 3
     CTX_POST_INIT: "x x x"
+TIP_ADAPTER:
+    USE_TIP_ADAPTER: 1
+    INIT_ALPHA: 1
+    INIT_BETA: 1
+  # if loading cached kv
+    LOAD_CACHE: 0
+    DATA_FILE: 'dataset/TBAD/train_files/tip_1shots.txt'
+    AUG_EPOCH: 1
