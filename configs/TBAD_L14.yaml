@@ -2,7 +2,7 @@ CACHE_DIR: 'cache'
 OUTPUT: 'output_test_tip.csv'
 
 DATA:
-    ROOT: 'E:/essay/FROSTER-main/TBAD_evaluation/TBAD/TBAD/'
+    ROOT: '/root/autodl-tmp/TBAD_Dataset/'
     TRAIN_FILE: 'dataset/TBAD/train_files/train_1shots.txt'
     TEST_FILE: 'dataset/TBAD/train_files/train_1shots.txt'
     DATASET: TBAD-8

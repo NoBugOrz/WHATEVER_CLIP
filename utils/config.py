@@ -4,7 +4,7 @@ from yacs.config import CfgNode as CN
 
 _C = CN()
 # Base config files
-_C.BASE = ['E:/python projects/temp-model']
+_C.BASE = ['/root/autodl-tmp/WHATEVER_CLIP']
 _C.CACHE_DIR = 'cache'
 # a csv file to save the results
 _C.OUTPUT = 'output.csv'
