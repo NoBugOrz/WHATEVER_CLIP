@@ -30,6 +30,10 @@ class xxx_clip(nn.Module):
         self.text_encoder = TextEncoder(config, self.class_names, self.clip, self.device)
         self.image_encoder = ImageEncoder(config, self.clip, self.device)
 
+    @property
+    def dtype(self):
+        return self.clip.dtype
+
     def forward(self, img):
         '''
         Args:
@@ -43,7 +47,7 @@ class xxx_clip(nn.Module):
 
 
 class TextEncoder(nn.Module):
-    def __init__(self, config, class_names, clip_model,device):
+    def __init__(self, config, class_names, clip_model, device):
         super().__init__()
         self.device = device
         self.clip_model = clip_model

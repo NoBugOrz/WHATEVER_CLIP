@@ -37,3 +37,4 @@ TIP_ADAPTER:
     LOAD_CACHE: 0
     DATA_FILE: 'dataset/TBAD/train_files/tip_1shots.txt'
     AUG_EPOCH: 1
+    TRAIN_EPOCH: 2

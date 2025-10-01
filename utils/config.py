@@ -76,6 +76,8 @@ _C.TIP_ADAPTER.INIT_BETA = 1
 _C.TIP_ADAPTER.LOAD_CACHE = 0
 _C.TIP_ADAPTER.DATA_FILE = ''
 _C.TIP_ADAPTER.AUG_EPOCH = 1
+_C.TIP_ADAPTER.TRAIN_EPOCH = 2
+
 
 def _update_config_from_file(config, cfg_file):
     config.defrost()
