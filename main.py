@@ -12,7 +12,7 @@ from test_net import test
 
 def parse_option():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', '-cfg', required=True, type=str, default='configs/zero_shot/eval/hmdb/tba_clip_hmdb51_base.yaml')
+    parser.add_argument('--config', '-cfg', required=True, type=str, default='configs/TBAD_L14.yaml')     
     parser.add_argument('--batch-size', type=int)
     parser.add_argument('--arch', type=str)
     parser.add_argument('--num_frames', type=int)

@@ -27,7 +27,7 @@ def build_cache_model(cfg, clip_model, train_loader_cache):
                 train_features = []
 
                 print('Augment Epoch: {:} / {:}'.format(augment_idx, cfg.TIP_ADAPTER.AUG_EPOCH))
-                for i,batch_data  in enumerate(tqdm(train_loader_cache)):
+                for i, batch_data  in enumerate(tqdm(train_loader_cache)):
                     images, target = extract_from_batch_data(batch_data,device)
                     images = images.cuda()
                     image_features = clip_model.encode_image(images)

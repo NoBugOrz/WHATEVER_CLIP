@@ -17,10 +17,12 @@ import torch.nn.functional as F
 def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, dataloader):
     '''
     train and save tip_adapter model
+    cache_keys: tensor shape=[512, 64]
+    cache_values: tensor shape=[8, 8]
     '''
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    adapter = nn.Linear(cache_keys.shape[0], cache_keys.shape[1], bias=False).to(student_model.dtype).cuda()
+    adapter = nn.Linear(cache_keys.shape[0], cache_keys.shape[1], bias=False).to(student_model.dtype).cuda() # in_dim=512, out_dim=64
     adapter.weight = nn.Parameter(cache_keys.t())
 
     optimizer = torch.optim.Adam(student_model.parameters(), lr=cfg.TRAIN.LR, eps=1e-4)
@@ -49,7 +51,7 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, data
             images, target = images.cuda(), target.cuda()
 
             with torch.no_grad():
-                image_features = student_model.encode_image(images)
+                image_features = student_model.image_encoder(images)
                 image_features /= image_features.norm(dim=-1, keepdim=True)
 
             affinity = adapter(image_features)
@@ -138,9 +140,9 @@ def train(cfg, logger, train_loader, student_model, teacher_model=None):
             optimizer.step()
             scheduler.step()
 
-        logger.info(f"In epoch:{cur_epoch}, loss:{torch.tensor(loss_list).mean().item()}"
-                    f" acc1:{np.array(acc_dic['acc1']).mean():.4f},"
-                    f" acc3:{np.array(acc_dic['acc3']).mean():.4f},"
-                    f" acc5:{np.array(acc_dic['acc5']).mean():.4f}")
+        logger.info(f"In epoch:{cur_epoch}, loss: {torch.tensor(loss_list).mean().item()}"
+                    f" acc1: {np.array(acc_dic['acc1']).mean():.4f},"
+                    f" acc3: {np.array(acc_dic['acc3']).mean():.4f},"
+                    f" acc5: {np.array(acc_dic['acc5']).mean():.4f}")
 
     train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader)

@@ -3,13 +3,13 @@ OUTPUT: 'output_test_tip.csv'
 
 DATA:
     ROOT: '/root/autodl-tmp/TBAD_Dataset/'
-    TRAIN_FILE: 'dataset/TBAD/train_files/train_1shots.txt'
-    TEST_FILE: 'dataset/TBAD/train_files/train_1shots.txt'
+    TRAIN_FILE: 'dataset/TBAD/train_files/'
+    TEST_FILE: 'dataset/TBAD/test_files/'
     DATASET: TBAD-8
     NUM_FRAMES: 8
     NUM_CLASSES: 8
     CLASS_NAMES: 'dataset/TBAD/class_names.json'
-    SHOTS: 8
+    SHOTS: 1
 MODEL:
     ARCH: ViT-B/16
     YOLO: 'Yolo-model/yolov8n.pt'
@@ -22,7 +22,7 @@ MODEL:
 TRAIN:
     BATCH_SIZE: 3 # BS 64
     ACCUMULATION_STEPS: 2
-    EPOCHS: 10
+    EPOCHS: 1
     LR: 0.001
 TEXT_PROMPT:
     N_CTX_PRE: 8
@@ -35,6 +35,6 @@ TIP_ADAPTER:
     INIT_BETA: 1
   # if loading cached kv
     LOAD_CACHE: 0
-    DATA_FILE: 'dataset/TBAD/train_files/tip_1shots.txt'
+    DATA_FILE: 'dataset/TBAD/train_files/'
     AUG_EPOCH: 1
     TRAIN_EPOCH: 2
