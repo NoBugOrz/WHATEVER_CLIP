@@ -13,11 +13,12 @@ from dataset.build import build_dataloader
 import torch.nn as nn
 import torch.nn.functional as F
 
+torch.autograd.set_detect_anomaly(True)
 
 def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, dataloader):
     '''
     train and save tip_adapter model
-    cache_keys: tensor shape=[512, 64]
+    cache_keys: tensor shape=[512, 8]
     cache_values: tensor shape=[8, 8]
     '''
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -25,8 +26,9 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, data
     adapter = nn.Linear(cache_keys.shape[0], cache_keys.shape[1], bias=False).to(student_model.dtype).cuda() # in_dim=512, out_dim=64
     adapter.weight = nn.Parameter(cache_keys.t())
 
-    optimizer = torch.optim.Adam(student_model.parameters(), lr=cfg.TRAIN.LR, eps=1e-4)
+    optimizer = torch.optim.Adam(adapter.parameters(), lr=cfg.TRAIN.LR, eps=1e-4)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, cfg.TRAIN.EPOCHS * len(dataloader))
+    criterion = torch.nn.CrossEntropyLoss()
 
     beta, alpha = cfg.TIP_ADAPTER.INIT_BETA, cfg.TIP_ADAPTER.INIT_ALPHA
     best_acc, best_epoch = 0.0, 0
@@ -35,8 +37,6 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, data
     student_model.eval()
     adapter.train()
 
-    '''encoded text prompts'''
-    clip_weights = student_model.text_encoder.short_cut # tensor, shape=[num_classes, 512]
 
     for train_idx in range(cfg.TIP_ADAPTER.TRAIN_EPOCH):
         adapter.train()
@@ -51,15 +51,13 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, data
             images, target = images.cuda(), target.cuda()
 
             with torch.no_grad():
-                image_features = student_model.image_encoder(images)
-                image_features /= image_features.norm(dim=-1, keepdim=True)
+                image_features, text_features, clip_logits = student_model(images)
 
             affinity = adapter(image_features)
             cache_logits = ((-1) * (beta - beta * affinity)).exp() @ cache_values
-            clip_logits = 100. * image_features @ clip_weights
             tip_logits = clip_logits + cache_logits * alpha
 
-            loss = F.cross_entropy(tip_logits, target)
+            loss = criterion(tip_logits, target)
 
             probs = tip_logits.softmax(dim=-1)  # softmax to probability_like tensor
             acc1, acc3, acc5 = validate(probs, target, acc_only=True)
@@ -145,4 +143,5 @@ def train(cfg, logger, train_loader, student_model, teacher_model=None):
                     f" acc3: {np.array(acc_dic['acc3']).mean():.4f},"
                     f" acc5: {np.array(acc_dic['acc5']).mean():.4f}")
 
-    train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader)
+    if cfg.TIP_ADAPTER.USE_TIP_ADAPTER == True:
+        train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader)

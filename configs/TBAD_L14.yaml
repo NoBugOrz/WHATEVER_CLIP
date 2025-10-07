@@ -20,7 +20,7 @@ MODEL:
     LP: 1
     USE_DISTILLATION: 1
 TRAIN:
-    BATCH_SIZE: 3 # BS 64
+    BATCH_SIZE: 1 # BS 64
     ACCUMULATION_STEPS: 2
     EPOCHS: 1
     LR: 0.001
@@ -34,7 +34,7 @@ TIP_ADAPTER:
     INIT_ALPHA: 1
     INIT_BETA: 1
   # if loading cached kv
-    LOAD_CACHE: 0
+    LOAD_CACHE: 1
     DATA_FILE: 'dataset/TBAD/train_files/'
     AUG_EPOCH: 1
-    TRAIN_EPOCH: 2
+    TRAIN_EPOCH: 15
