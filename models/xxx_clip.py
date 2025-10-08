@@ -98,7 +98,8 @@ class ImageEncoder(nn.Module):
         self.dtype = clip_model.dtype
         self.output_dim = self.clip_model.visual.output_dim
         self.device = device
-        self.batch_size = config.TRAIN.BATCH_SIZE
+        # self.batch_size = config.TRAIN.BATCH_SIZE
+        self.num_frames = config.DATA.NUM_FRAMES
         self.linear = nn.Linear(self.output_dim, self.output_dim).to(self.device).to(torch.float16)
 
 
@@ -111,7 +112,7 @@ class ImageEncoder(nn.Module):
             video_encode: tensor shape [bz, output_dim]  (not yet normalized)
         '''
         video_encode = self.clip_model.encode_image(x)
-        video_encode = video_encode.reshape(self.batch_size, -1, self.output_dim) # shape = [bz * num_frames, output_dim]
+        video_encode = video_encode.reshape(-1, self.num_frames, self.output_dim) # shape = [bz, num_frames, output_dim]
 
         #TODO 直接mean_pooling效果不行，找一个可以结合时空信息的模块
         video_encode = video_encode.mean(dim=1)

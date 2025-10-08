@@ -15,7 +15,22 @@ import torch.nn.functional as F
 
 torch.autograd.set_detect_anomaly(True)
 
-def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, dataloader):
+def pre_load_features(model, loader):
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    features, labels = [], []
+    for i, batch_data in enumerate(tqdm(loader)):
+        images, target = extract_from_batch_data(batch_data, device)  # images: tensor shape=[*, c, h, w],target tensor shape=[bz]
+        images, target = images.cuda(), target.cuda()
+
+        with torch.no_grad():
+            image_features, text_features, clip_logits = model(images)
+
+        features.append(image_features)
+        labels.append(target)
+
+    return torch.cat(features), torch.cat(labels)
+
+def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader, val_features):
     '''
     train and save tip_adapter model
     cache_keys: tensor shape=[512, 8]
@@ -27,7 +42,7 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, data
     adapter.weight = nn.Parameter(cache_keys.t())
 
     optimizer = torch.optim.Adam(adapter.parameters(), lr=cfg.TRAIN.LR, eps=1e-4)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, cfg.TRAIN.EPOCHS * len(dataloader))
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, cfg.TRAIN.EPOCHS * len(train_loader))
     criterion = torch.nn.CrossEntropyLoss()
 
     beta, alpha = cfg.TIP_ADAPTER.INIT_BETA, cfg.TIP_ADAPTER.INIT_ALPHA
@@ -37,7 +52,6 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, data
     student_model.eval()
     adapter.train()
 
-
     for train_idx in range(cfg.TIP_ADAPTER.TRAIN_EPOCH):
         adapter.train()
 
@@ -46,7 +60,7 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, data
         acc_dic = {'acc1': [], 'acc3': [], 'acc5': []}
         print('Train Epoch: {:} / {:}'.format(train_idx, cfg.TIP_ADAPTER.TRAIN_EPOCH))
 
-        for i, batch_data in enumerate(tqdm(dataloader)):
+        for i, batch_data in enumerate(tqdm(train_loader)):
             images, target = extract_from_batch_data(batch_data, device)  # images: tensor shape=[*, c, h, w],target tensor shape=[bz]
             images, target = images.cuda(), target.cuda()
 
@@ -77,9 +91,42 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, data
         print('LR: {:.6f}, Acc: {:.4f} ({:}/{:}), Loss: {:.4f}'.format(current_lr, correct_samples / all_samples,
                                                                        correct_samples, all_samples,
                                                                        sum(loss_list) / len(loss_list)))
+        # Eval
+        adapter.eval()
+
+        affinity = adapter(test_features)
+        cache_logits = ((-1) * (beta - beta * affinity)).exp() @ cache_values
+        clip_logits = 100. * test_features @ clip_weights
+        tip_logits = clip_logits + cache_logits * alpha
+        acc = cls_acc(tip_logits, test_labels)
+
+        print("**** tip_adapter-F's test accuracy: {:.2f}. ****\n".format(acc))
+        if acc > best_acc:
+            best_acc = acc
+            best_epoch = train_idx
+            torch.save(adapter.weight, cfg['cache_dir'] + "/best_F_" + str(cfg['shots']) + "shots.pt")
+
+    adapter.weight = torch.load(cfg['cache_dir'] + "/best_F_" + str(cfg['shots']) + "shots.pt")
+    print(f"**** After fine-tuning, tip_adapter-F's best test accuracy: {best_acc:.2f}, at epoch: {best_epoch}. ****\n")
+
+    print("\n-------- Searching hyperparameters on the val set. --------")
+
+    # Search Hyperparameters
+    best_beta, best_alpha = search_hp(cfg, cache_keys, cache_values, val_features, val_labels, clip_weights,
+                                      adapter=adapter)
+
+    print("\n-------- Evaluating on the test set. --------")
+
+    affinity = adapter(test_features)
+    cache_logits = ((-1) * (best_beta - best_beta * affinity)).exp() @ cache_values
+
+    tip_logits = clip_logits + cache_logits * best_alpha
+    acc = cls_acc(tip_logits, test_labels)
+    print("**** tip_adapter-F's test accuracy: {:.2f}. ****\n".format(max(best_acc, acc)))
 
 
-def train(cfg, logger, train_loader, student_model, teacher_model=None):
+
+def train(cfg, logger, train_loader, val_loader, student_model, teacher_model=None):
     '''
     Training the student model on the given dataset.
     '''
@@ -144,4 +191,5 @@ def train(cfg, logger, train_loader, student_model, teacher_model=None):
                     f" acc5: {np.array(acc_dic['acc5']).mean():.4f}")
 
     if cfg.TIP_ADAPTER.USE_TIP_ADAPTER == True:
-        train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader)
+        val_features, vak_labels = pre_load_features(student_model, val_loader) # [num_samples, 512]
+        train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader, val_features) # [num_samples]
