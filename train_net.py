@@ -12,8 +12,9 @@ from models.tip_adapter.utils import build_cache_model
 from dataset.build import build_dataloader
 import torch.nn as nn
 import torch.nn.functional as F
+from models.tip_adapter.utils import cls_acc
 
-torch.autograd.set_detect_anomaly(True)
+# torch.autograd.set_detect_anomaly(True)
 
 def pre_load_features(model, loader):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -28,9 +29,11 @@ def pre_load_features(model, loader):
         features.append(image_features)
         labels.append(target)
 
-    return torch.cat(features), torch.cat(labels)
+    video_features, labels, text_features = torch.cat(features), torch.cat(labels), text_features
 
-def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader, val_features):
+    return video_features, labels, text_features
+
+def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader, val_features, clip_weights, test_labels):
     '''
     train and save tip_adapter model
     cache_keys: tensor shape=[512, 8]
@@ -38,7 +41,7 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, trai
     '''
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    adapter = nn.Linear(cache_keys.shape[0], cache_keys.shape[1], bias=False).to(student_model.dtype).cuda() # in_dim=512, out_dim=64
+    adapter = nn.Linear(cache_keys.shape[0], cache_keys.shape[1], bias=False).to(student_model.dtype).cuda() # in_dim=512, out_dim=8
     adapter.weight = nn.Parameter(cache_keys.t())
 
     optimizer = torch.optim.Adam(adapter.parameters(), lr=cfg.TRAIN.LR, eps=1e-4)
@@ -65,10 +68,11 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, trai
             images, target = images.cuda(), target.cuda()
 
             with torch.no_grad():
-                image_features, text_features, clip_logits = student_model(images)
+                image_features, text_features, clip_logits = student_model(images) # image_features [bz, 512]   text_features [num_cls, 512]   clip_logits [bz, num_cls]
 
-            affinity = adapter(image_features)
+            affinity = adapter(image_features) # [bz, tip_num_samples]
             cache_logits = ((-1) * (beta - beta * affinity)).exp() @ cache_values
+            # cache_logits = cache_logits
             tip_logits = clip_logits + cache_logits * alpha
 
             loss = criterion(tip_logits, target)
@@ -94,17 +98,18 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, trai
         # Eval
         adapter.eval()
 
-        affinity = adapter(test_features)
+        affinity = adapter(val_features)
         cache_logits = ((-1) * (beta - beta * affinity)).exp() @ cache_values
-        clip_logits = 100. * test_features @ clip_weights
-        tip_logits = clip_logits + cache_logits * alpha
-        acc = cls_acc(tip_logits, test_labels)
+        clip_logits = (100. * val_features @ clip_weights.t()).softmax(dim=-1)
+        tip_logits = clip_logits + cache_logits * alpha # [num_val_samples, num_cls]
+        # test_labels [num_val_samples]
+        acc = cls_acc(tip_logits, test_labels) #
 
         print("**** tip_adapter-F's test accuracy: {:.2f}. ****\n".format(acc))
-        if acc > best_acc:
-            best_acc = acc
-            best_epoch = train_idx
-            torch.save(adapter.weight, cfg['cache_dir'] + "/best_F_" + str(cfg['shots']) + "shots.pt")
+        # if acc > best_acc:
+        #     best_acc = acc
+        #     best_epoch = train_idx
+        #     torch.save(adapter.weight, cfg['cache_dir'] + "/best_F_" + str(cfg['shots']) + "shots.pt")
 
     adapter.weight = torch.load(cfg['cache_dir'] + "/best_F_" + str(cfg['shots']) + "shots.pt")
     print(f"**** After fine-tuning, tip_adapter-F's best test accuracy: {best_acc:.2f}, at epoch: {best_epoch}. ****\n")
@@ -191,5 +196,7 @@ def train(cfg, logger, train_loader, val_loader, student_model, teacher_model=No
                     f" acc5: {np.array(acc_dic['acc5']).mean():.4f}")
 
     if cfg.TIP_ADAPTER.USE_TIP_ADAPTER == True:
-        val_features, vak_labels = pre_load_features(student_model, val_loader) # [num_samples, 512]
-        train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader, val_features) # [num_samples]
+        val_features, val_labels, text_features = pre_load_features(student_model, val_loader) # val_features [num_samples, 512]
+                                                                                               # val_labels [num_samples]
+                                                                                               # text_features [num_cls, 512]
+        train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader, val_features, text_features, val_labels) # [num_samples]
