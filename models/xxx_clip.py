@@ -98,7 +98,8 @@ class ImageEncoder(nn.Module):
         self.dtype = clip_model.dtype
         self.output_dim = self.clip_model.visual.output_dim
         self.device = device
-        self.batch_size = config.TRAIN.BATCH_SIZE
+        # self.batch_size = config.TRAIN.BATCH_SIZE
+        self.num_frames = config.DATA.NUM_FRAMES
         self.linear = nn.Linear(self.output_dim, self.output_dim).to(self.device).to(torch.float16)
         self.num_frames = config.DATA.NUM_FRAMES
 

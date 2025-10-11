@@ -41,9 +41,9 @@ def main(cfg, logger):
     student_model = xxx_clip(cfg,device)
 
     logger.info('loading dataloaders...')
-    train_data, test_data, train_loader, test_loader = build_dataloader(cfg, logger, is_tip=False)
+    train_data, test_data, val_data, train_loader , test_loader, val_loader = build_dataloader(cfg, logger, is_tip=False)
     # test_raw_clip(cfg, logger, train_loader, raw_clip, student_model)
-    train(cfg, logger, train_loader, student_model, teacher_model=raw_clip)
+    train(cfg, logger, train_loader, val_loader, student_model, teacher_model=raw_clip)
     test(cfg, logger, test_loader, student_model)
 
 if __name__ == '__main__':

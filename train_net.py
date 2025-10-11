@@ -12,8 +12,6 @@ from models.tip_adapter.utils import build_cache_model
 from dataset.build import build_dataloader
 import torch.nn as nn
 import torch.nn.functional as F
-from models.xxx_clip import get_clip
-
 
 # torch.autograd.set_detect_anomaly(True)
 
@@ -29,7 +27,7 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, data
     adapter.weight = nn.Parameter(cache_keys.t())
 
     optimizer = torch.optim.Adam(adapter.parameters(), lr=cfg.TRAIN.LR, eps=1e-4)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, cfg.TIP_ADAPTER.TRAIN_EPOCH * len(dataloader))
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, cfg.TRAIN.EPOCHS * len(dataloader))
     criterion = torch.nn.CrossEntropyLoss()
 
     beta, alpha = cfg.TIP_ADAPTER.INIT_BETA, cfg.TIP_ADAPTER.INIT_ALPHA
@@ -50,6 +48,7 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, data
 
         for i, batch_data in enumerate(tqdm(dataloader)):
             images, target = extract_from_batch_data(batch_data, device)  # images: tensor shape=[*, c, h, w],target tensor shape=[bz]
+            images, target = images.cuda(), target.cuda()
 
             with torch.no_grad():
                 image_features, text_features, clip_logits = student_model(images)
@@ -99,8 +98,7 @@ def train(cfg, logger, train_loader, student_model, teacher_model=None):
         '''
         logger.info('Use tip adapter in training')
         tip_data, tip_loader = build_dataloader(cfg, logger, is_tip=True)
-        raw_clip = get_clip(cfg, is_teacher=False)
-        cache_keys, cache_values = build_cache_model(cfg=cfg, clip_model=raw_clip, train_loader_cache=tip_loader)
+        cache_keys, cache_values = build_cache_model(cfg=cfg,clip_model=teacher_model,train_loader_cache=tip_loader)
 
     student_model.train()
     optimizer = torch.optim.Adam(student_model.parameters(), lr=cfg.TRAIN.LR, eps=1e-4)

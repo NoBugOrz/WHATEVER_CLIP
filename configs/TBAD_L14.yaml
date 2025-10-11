@@ -5,6 +5,7 @@ DATA:
     ROOT: '/root/autodl-tmp/TBAD_Dataset/'
     TRAIN_FILE: 'dataset/TBAD/train_files/'
     TEST_FILE: 'dataset/TBAD/test_files/'
+    VAL_FILE: 'dataset/TBAD/val_files/'
     DATASET: TBAD-8
     NUM_FRAMES: 8
     NUM_CLASSES: 8
