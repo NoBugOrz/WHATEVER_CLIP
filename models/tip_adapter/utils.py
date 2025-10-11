@@ -17,7 +17,7 @@ def cls_acc(output, target, topk=1):
 
 def build_cache_model(cfg, clip_model, train_loader_cache):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    bz = cfg.TRAIN.BATCH_SIZE
+    # bz = cfg.TRAIN.BATCH_SIZE
     num_frames = cfg.DATA.NUM_FRAMES
     if cfg.TIP_ADAPTER.LOAD_CACHE == False:
         cache_keys = []
@@ -38,7 +38,7 @@ def build_cache_model(cfg, clip_model, train_loader_cache):
                     [bz*num_frames, 512] -> [bz, 512]
                     *** use batchsize = 1 when building cache model or the dataloader would miss samples if len(samples) % batch_size != 0 ***
                     '''
-                    image_features = image_features.reshape(bz, num_frames, 512)
+                    image_features = image_features.reshape(-1, num_frames, 512)
                     image_features = image_features.mean(dim=1, keepdim=False)
 
                     train_features.append(image_features)

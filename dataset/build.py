@@ -153,7 +153,7 @@ def build_dataloader(config, logger, is_tip=False):
         tip_data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=ann_file,
                                   shot=config.DATA.SHOTS, type='train')
         sampler_test = SubsetRandomSampler(np.arange(len(tip_data)))
-        tip_loader = DataLoader(tip_data, batch_size=config.TRAIN.BATCH_SIZE, sampler=sampler_test,
+        tip_loader = DataLoader(tip_data, batch_size=1, sampler=sampler_test,
                                   num_workers=12, pin_memory=True, drop_last=True)
 
         return tip_data, tip_loader
