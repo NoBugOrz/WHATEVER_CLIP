@@ -10,7 +10,7 @@ DATA:
     NUM_FRAMES: 8
     NUM_CLASSES: 8
     CLASS_NAMES: 'dataset/TBAD/class_names.json'
-    SHOTS: 8
+    SHOTS: 1
 MODEL:
     ARCH: ViT-B/16
     YOLO: 'Yolo-model/yolov8n.pt'
@@ -23,7 +23,7 @@ MODEL:
 TRAIN:
     BATCH_SIZE: 4 # BS 64
     ACCUMULATION_STEPS: 2
-    EPOCHS: 20
+    EPOCHS: 1
     LR: 0.001
 TEXT_PROMPT:
     N_CTX_PRE: 8
@@ -39,3 +39,7 @@ TIP_ADAPTER:
     DATA_FILE: 'dataset/TBAD/train_files/'
     AUG_EPOCH: 1
     TRAIN_EPOCH: 15
+
+    SEARCH_HP: True
+    SEARCH_SCALE: [12, 5]
+    SEARCH_STEP: [200, 20]

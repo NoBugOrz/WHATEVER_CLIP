@@ -19,6 +19,7 @@ def build_cache_model(cfg, clip_model, train_loader_cache):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     # bz = cfg.TRAIN.BATCH_SIZE
     num_frames = cfg.DATA.NUM_FRAMES
+    output_dim = clip_model.output_dim # 也就是特征维度feature_dim
     if cfg.TIP_ADAPTER.LOAD_CACHE == False:
         cache_keys = []
         cache_values = []
@@ -32,13 +33,13 @@ def build_cache_model(cfg, clip_model, train_loader_cache):
                 for i, batch_data  in enumerate(tqdm(train_loader_cache)):
                     images, target = extract_from_batch_data(batch_data,device)
                     images = images.cuda()
-                    image_features = clip_model.encode_image(images) # [bz*num_frames, 512]
+                    image_features = clip_model.encode_image(images) # [bz*num_frames, feature_dim]
                     '''
                     for each item in a batch, mean pooling features of num_frames to represent the whole item
-                    [bz*num_frames, 512] -> [bz, 512]
+                    [bz*num_frames, feature_dim] -> [bz, feature_dim]
                     *** use batchsize = 1 when building cache model or the dataloader would miss samples if len(samples) % batch_size != 0 ***
                     '''
-                    image_features = image_features.reshape(-1, num_frames, 512)
+                    image_features = image_features.reshape(-1, num_frames, output_dim)
                     image_features = image_features.mean(dim=1, keepdim=False)
 
                     train_features.append(image_features)
@@ -87,12 +88,12 @@ def pre_load_features(cfg, split, clip_model, loader):
 
 
 def search_hp(cfg, cache_keys, cache_values, features, labels, clip_weights, adapter=None):
-    if cfg['search_hp'] == True:
+    if cfg.TIP_ADAPTER.SEARCH_HP == True:
 
-        beta_list = [i * (cfg['search_scale'][0] - 0.1) / cfg['search_step'][0] + 0.1 for i in
-                     range(cfg['search_step'][0])]
-        alpha_list = [i * (cfg['search_scale'][1] - 0.1) / cfg['search_step'][1] + 0.1 for i in
-                      range(cfg['search_step'][1])]
+        beta_list = [i * (cfg.TIP_ADAPTER.SEARCH_SCALE[0] - 0.1) / cfg.TIP_ADAPTER.SEARCH_STEP[0] + 0.1 for i in
+                     range(cfg.TIP_ADAPTER.SEARCH_STEP[0])]
+        alpha_list = [i * (cfg.TIP_ADAPTER.SEARCH_SCALE[1] - 0.1) / cfg.TIP_ADAPTER.SEARCH_STEP[1] + 0.1 for i in
+                      range(cfg.TIP_ADAPTER.SEARCH_STEP[1])]
 
         best_acc = 0
         best_beta, best_alpha = 0, 0

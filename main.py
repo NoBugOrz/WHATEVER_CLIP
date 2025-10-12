@@ -33,17 +33,17 @@ def main(cfg, logger):
 
     if cfg.MODEL.USE_DISTILLATION:
         logger.info('loading raw_clip...')
-        raw_clip = get_clip(cfg,is_teacher=True)
+        raw_clip = xxx_clip(cfg,device,is_teacher=True)
     else:
         raw_clip = None
 
     logger.info('building xxx_model...')
-    student_model = xxx_clip(cfg,device)
+    student_model = xxx_clip(cfg,device,is_teacher=False)
 
     logger.info('loading dataloaders...')
     train_data, test_data, val_data, train_loader , test_loader, val_loader = build_dataloader(cfg, logger, is_tip=False)
     # test_raw_clip(cfg, logger, train_loader, raw_clip, student_model)
-    train(cfg, logger, train_loader, val_loader, student_model, teacher_model=raw_clip)
+    train(cfg, logger, train_loader, test_loader, val_loader, student_model, teacher_model=raw_clip)
     test(cfg, logger, test_loader, student_model)
 
 if __name__ == '__main__':

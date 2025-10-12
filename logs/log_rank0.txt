@@ -15779,3 +15779,1221 @@ TRAIN:
 [2025-10-09 13:03:40 root] (train_net.py 193): INFO In epoch:17, loss: 2.07958984375 acc1: 12.5000, acc3: 29.6875, acc5: 62.5000
 [2025-10-09 13:03:48 root] (train_net.py 193): INFO In epoch:18, loss: 2.0792236328125 acc1: 12.5000, acc3: 37.5000, acc5: 62.5000
 [2025-10-09 13:03:57 root] (train_net.py 193): INFO In epoch:19, loss: 2.07958984375 acc1: 12.5000, acc3: 37.5000, acc5: 62.5000
+[2025-10-11 13:56:53 root] (main.py 53): INFO Running with config:
+[2025-10-11 13:56:53 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 8
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 20
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-11 13:56:53 root] (main.py 35): INFO loading raw_clip...
+[2025-10-11 13:56:56 root] (main.py 40): INFO building xxx_model...
+[2025-10-11 13:56:59 root] (main.py 43): INFO loading dataloaders...
+[2025-10-11 13:57:33 root] (build.py 172): INFO test_data_finished!
+[2025-10-11 13:58:08 root] (build.py 180): INFO train_data_finished!
+[2025-10-11 13:58:39 root] (build.py 188): INFO val_data_finished!
+[2025-10-11 13:58:39 root] (train_net.py 135): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-11 13:58:39 root] (train_net.py 140): INFO Use distillation in training
+[2025-10-11 13:58:39 root] (train_net.py 148): INFO Use tip adapter in training
+[2025-10-11 13:58:42 root] (build.py 152): INFO use tip adapter in training
+[2025-10-11 13:59:17 root] (train_net.py 162): INFO total trainable parameters:
+[2025-10-11 13:59:21 root] (train_net.py 190): INFO In epoch:0, loss: 2.1041259765625 acc1: 7.8125, acc3: 34.3750, acc5: 60.9375
+[2025-10-11 13:59:25 root] (train_net.py 190): INFO In epoch:1, loss: 2.0816650390625 acc1: 4.6875, acc3: 28.1250, acc5: 51.5625
+[2025-10-11 13:59:29 root] (train_net.py 190): INFO In epoch:2, loss: 2.0799560546875 acc1: 12.5000, acc3: 29.6875, acc5: 59.3750
+[2025-10-11 13:59:33 root] (train_net.py 190): INFO In epoch:3, loss: 2.080078125 acc1: 12.5000, acc3: 32.8125, acc5: 59.3750
+[2025-10-11 13:59:36 root] (train_net.py 190): INFO In epoch:4, loss: 2.0799560546875 acc1: 12.5000, acc3: 29.6875, acc5: 59.3750
+[2025-10-11 13:59:40 root] (train_net.py 190): INFO In epoch:5, loss: 2.079833984375 acc1: 12.5000, acc3: 31.2500, acc5: 57.8125
+[2025-10-11 13:59:43 root] (train_net.py 190): INFO In epoch:6, loss: 2.07958984375 acc1: 12.5000, acc3: 31.2500, acc5: 54.6875
+[2025-10-11 13:59:47 root] (train_net.py 190): INFO In epoch:7, loss: 2.0794677734375 acc1: 4.6875, acc3: 29.6875, acc5: 62.5000
+[2025-10-11 13:59:51 root] (train_net.py 190): INFO In epoch:8, loss: 2.0794677734375 acc1: 9.3750, acc3: 32.8125, acc5: 60.9375
+[2025-10-11 13:59:55 root] (train_net.py 190): INFO In epoch:9, loss: 2.0797119140625 acc1: 12.5000, acc3: 31.2500, acc5: 57.8125
+[2025-10-11 13:59:58 root] (train_net.py 190): INFO In epoch:10, loss: 2.0799560546875 acc1: 12.5000, acc3: 28.1250, acc5: 57.8125
+[2025-10-11 14:00:02 root] (train_net.py 190): INFO In epoch:11, loss: 2.079833984375 acc1: 12.5000, acc3: 40.6250, acc5: 59.3750
+[2025-10-11 14:00:06 root] (train_net.py 190): INFO In epoch:12, loss: 2.0792236328125 acc1: 12.5000, acc3: 35.9375, acc5: 62.5000
+[2025-10-11 14:00:10 root] (train_net.py 190): INFO In epoch:13, loss: 2.0792236328125 acc1: 12.5000, acc3: 39.0625, acc5: 67.1875
+[2025-10-11 14:00:13 root] (train_net.py 190): INFO In epoch:14, loss: 2.0794677734375 acc1: 12.5000, acc3: 29.6875, acc5: 56.2500
+[2025-10-11 14:00:17 root] (train_net.py 190): INFO In epoch:15, loss: 2.0792236328125 acc1: 12.5000, acc3: 42.1875, acc5: 54.6875
+[2025-10-11 14:00:21 root] (train_net.py 190): INFO In epoch:16, loss: 2.0792236328125 acc1: 12.5000, acc3: 29.6875, acc5: 59.3750
+[2025-10-11 14:00:24 root] (train_net.py 190): INFO In epoch:17, loss: 2.0792236328125 acc1: 12.5000, acc3: 42.1875, acc5: 62.5000
+[2025-10-11 14:00:28 root] (train_net.py 190): INFO In epoch:18, loss: 2.079345703125 acc1: 12.5000, acc3: 39.0625, acc5: 64.0625
+[2025-10-11 14:00:32 root] (train_net.py 190): INFO In epoch:19, loss: 2.0791015625 acc1: 12.5000, acc3: 43.7500, acc5: 60.9375
+[2025-10-11 14:02:35 root] (main.py 53): INFO Running with config:
+[2025-10-11 14:02:35 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-11 14:02:35 root] (main.py 35): INFO loading raw_clip...
+[2025-10-11 14:02:39 root] (main.py 40): INFO building xxx_model...
+[2025-10-11 14:02:42 root] (main.py 43): INFO loading dataloaders...
+[2025-10-11 14:03:17 root] (build.py 171): INFO test_data_finished!
+[2025-10-11 14:03:23 root] (build.py 179): INFO train_data_finished!
+[2025-10-11 14:03:57 root] (build.py 187): INFO val_data_finished!
+[2025-10-11 14:03:57 root] (train_net.py 135): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-11 14:03:57 root] (train_net.py 140): INFO Use distillation in training
+[2025-10-11 14:03:57 root] (train_net.py 148): INFO Use tip adapter in training
+[2025-10-11 14:06:41 root] (train_net.py 162): INFO total trainable parameters:
+[2025-10-11 14:08:39 root] (train_net.py 190): INFO In epoch:0, loss: 2.0380859375 acc1: 12.5000, acc3: 25.0000, acc5: 62.5000
+[2025-10-12 18:08:00 root] (main.py 53): INFO Running with config:
+[2025-10-12 18:08:00 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 18:08:00 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 18:08:04 root] (main.py 40): INFO building xxx_model...
+[2025-10-12 18:08:07 root] (main.py 43): INFO loading dataloaders...
+[2025-10-12 18:08:44 root] (build.py 171): INFO test_data_finished!
+[2025-10-12 18:08:49 root] (build.py 179): INFO train_data_finished!
+[2025-10-12 18:09:25 root] (build.py 187): INFO val_data_finished!
+[2025-10-12 18:09:25 root] (train_net.py 135): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-12 18:09:25 root] (train_net.py 140): INFO Use distillation in training
+[2025-10-12 18:09:25 root] (train_net.py 148): INFO Use tip adapter in training
+[2025-10-12 18:10:59 root] (train_net.py 162): INFO total trainable parameters:
+[2025-10-12 18:11:43 root] (train_net.py 190): INFO In epoch:0, loss: 2.1083984375 acc1: 12.5000, acc3: 50.0000, acc5: 62.5000
+[2025-10-12 19:05:44 root] (main.py 53): INFO Running with config:
+[2025-10-12 19:05:44 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 19:05:44 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 19:06:37 root] (main.py 53): INFO Running with config:
+[2025-10-12 19:06:37 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 19:06:37 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 19:06:40 root] (main.py 40): INFO building xxx_model...
+[2025-10-12 19:06:42 root] (main.py 43): INFO loading dataloaders...
+[2025-10-12 19:07:19 root] (build.py 171): INFO test_data_finished!
+[2025-10-12 19:07:25 root] (build.py 179): INFO train_data_finished!
+[2025-10-12 19:08:01 root] (build.py 187): INFO val_data_finished!
+[2025-10-12 19:08:01 root] (train_net.py 135): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-12 19:08:01 root] (train_net.py 140): INFO Use distillation in training
+[2025-10-12 19:08:01 root] (train_net.py 148): INFO Use tip adapter in training
+[2025-10-12 19:08:40 root] (main.py 53): INFO Running with config:
+[2025-10-12 19:08:40 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 19:08:40 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 19:08:43 root] (main.py 40): INFO building xxx_model...
+[2025-10-12 19:08:46 root] (main.py 43): INFO loading dataloaders...
+[2025-10-12 19:09:24 root] (build.py 171): INFO test_data_finished!
+[2025-10-12 19:09:30 root] (build.py 179): INFO train_data_finished!
+[2025-10-12 19:10:08 root] (build.py 187): INFO val_data_finished!
+[2025-10-12 19:10:08 root] (train_net.py 135): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-12 19:10:08 root] (train_net.py 140): INFO Use distillation in training
+[2025-10-12 19:10:08 root] (train_net.py 148): INFO Use tip adapter in training
+[2025-10-12 19:22:09 root] (main.py 53): INFO Running with config:
+[2025-10-12 19:22:09 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 19:22:09 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 19:22:45 root] (main.py 53): INFO Running with config:
+[2025-10-12 19:22:45 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 19:22:45 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 19:22:48 root] (main.py 40): INFO building xxx_model...
+[2025-10-12 19:22:50 root] (main.py 43): INFO loading dataloaders...
+[2025-10-12 19:23:28 root] (build.py 171): INFO test_data_finished!
+[2025-10-12 19:23:33 root] (build.py 179): INFO train_data_finished!
+[2025-10-12 19:24:09 root] (build.py 187): INFO val_data_finished!
+[2025-10-12 19:24:09 root] (train_net.py 135): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-12 19:24:09 root] (train_net.py 140): INFO Use distillation in training
+[2025-10-12 19:24:09 root] (train_net.py 148): INFO Use tip adapter in training
+[2025-10-12 19:25:01 root] (train_net.py 162): INFO total trainable parameters:
+[2025-10-12 19:25:34 root] (train_net.py 190): INFO In epoch:0, loss: 2.1025390625 acc1: 0.0000, acc3: 12.5000, acc5: 62.5000
+[2025-10-12 19:29:39 root] (main.py 53): INFO Running with config:
+[2025-10-12 19:29:39 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 19:29:39 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 19:29:43 root] (main.py 40): INFO building xxx_model...
+[2025-10-12 19:29:45 root] (main.py 43): INFO loading dataloaders...
+[2025-10-12 19:30:19 root] (build.py 171): INFO test_data_finished!
+[2025-10-12 19:30:24 root] (build.py 179): INFO train_data_finished!
+[2025-10-12 19:30:56 root] (build.py 187): INFO val_data_finished!
+[2025-10-12 19:30:56 root] (train_net.py 135): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-12 19:30:56 root] (train_net.py 140): INFO Use distillation in training
+[2025-10-12 19:30:56 root] (train_net.py 148): INFO Use tip adapter in training
+[2025-10-12 19:31:06 root] (train_net.py 162): INFO total trainable parameters:
+[2025-10-12 19:31:08 root] (train_net.py 190): INFO In epoch:0, loss: 1.998046875 acc1: 37.5000, acc3: 50.0000, acc5: 62.5000
+[2025-10-12 19:42:55 root] (main.py 53): INFO Running with config:
+[2025-10-12 19:42:55 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 19:42:55 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 19:42:59 root] (main.py 40): INFO building xxx_model...
+[2025-10-12 19:43:01 root] (main.py 43): INFO loading dataloaders...
+[2025-10-12 19:43:34 root] (build.py 171): INFO test_data_finished!
+[2025-10-12 19:43:39 root] (build.py 179): INFO train_data_finished!
+[2025-10-12 19:44:11 root] (build.py 187): INFO val_data_finished!
+[2025-10-12 19:44:11 root] (train_net.py 135): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-12 19:44:11 root] (train_net.py 140): INFO Use distillation in training
+[2025-10-12 19:44:11 root] (train_net.py 148): INFO Use tip adapter in training
+[2025-10-12 19:44:21 root] (train_net.py 162): INFO total trainable parameters:
+[2025-10-12 19:44:24 root] (train_net.py 190): INFO In epoch:0, loss: 2.0400390625 acc1: 25.0000, acc3: 50.0000, acc5: 75.0000
+[2025-10-12 19:48:12 root] (main.py 53): INFO Running with config:
+[2025-10-12 19:48:12 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 19:48:12 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 19:48:15 root] (main.py 40): INFO building xxx_model...
+[2025-10-12 19:48:18 root] (main.py 43): INFO loading dataloaders...
+[2025-10-12 19:48:52 root] (build.py 171): INFO test_data_finished!
+[2025-10-12 19:48:57 root] (build.py 179): INFO train_data_finished!
+[2025-10-12 19:49:29 root] (build.py 187): INFO val_data_finished!
+[2025-10-12 19:49:29 root] (train_net.py 135): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-12 19:49:29 root] (train_net.py 140): INFO Use distillation in training
+[2025-10-12 19:49:29 root] (train_net.py 148): INFO Use tip adapter in training
+[2025-10-12 19:49:39 root] (train_net.py 162): INFO total trainable parameters:
+[2025-10-12 19:49:41 root] (train_net.py 190): INFO In epoch:0, loss: 2.080078125 acc1: 12.5000, acc3: 62.5000, acc5: 87.5000
+[2025-10-12 19:50:36 root] (main.py 53): INFO Running with config:
+[2025-10-12 19:50:36 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 19:50:36 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 19:50:39 root] (main.py 40): INFO building xxx_model...
+[2025-10-12 19:50:42 root] (main.py 43): INFO loading dataloaders...
+[2025-10-12 19:51:14 root] (build.py 171): INFO test_data_finished!
+[2025-10-12 19:51:20 root] (build.py 179): INFO train_data_finished!
+[2025-10-12 19:51:52 root] (build.py 187): INFO val_data_finished!
+[2025-10-12 19:51:52 root] (train_net.py 136): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-12 19:51:52 root] (train_net.py 141): INFO Use distillation in training
+[2025-10-12 19:51:52 root] (train_net.py 149): INFO Use tip adapter in training
+[2025-10-12 19:52:02 root] (train_net.py 163): INFO total trainable parameters:
+[2025-10-12 19:52:05 root] (train_net.py 191): INFO In epoch:0, loss: 1.96240234375 acc1: 25.0000, acc3: 62.5000, acc5: 75.0000
+[2025-10-12 19:53:41 root] (main.py 53): INFO Running with config:
+[2025-10-12 19:53:41 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 19:53:41 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 19:53:44 root] (main.py 40): INFO building xxx_model...
+[2025-10-12 19:53:47 root] (main.py 43): INFO loading dataloaders...
+[2025-10-12 19:54:19 root] (build.py 171): INFO test_data_finished!
+[2025-10-12 19:54:24 root] (build.py 179): INFO train_data_finished!
+[2025-10-12 19:54:55 root] (build.py 187): INFO val_data_finished!
+[2025-10-12 19:54:55 root] (train_net.py 136): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-12 19:54:55 root] (train_net.py 141): INFO Use distillation in training
+[2025-10-12 19:54:55 root] (train_net.py 149): INFO Use tip adapter in training
+[2025-10-12 19:55:04 root] (train_net.py 163): INFO total trainable parameters:
+[2025-10-12 19:55:06 root] (train_net.py 191): INFO In epoch:0, loss: 2.0556640625 acc1: 12.5000, acc3: 25.0000, acc5: 50.0000
+[2025-10-12 20:02:11 root] (main.py 53): INFO Running with config:
+[2025-10-12 20:02:11 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  SEARCH_HP: True
+  SEARCH_SCALE: [12, 5]
+  SEARCH_STEP: [200, 20]
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 20:02:11 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 20:02:15 root] (main.py 40): INFO building xxx_model...
+[2025-10-12 20:02:18 root] (main.py 43): INFO loading dataloaders...
+[2025-10-12 20:02:51 root] (build.py 171): INFO test_data_finished!
+[2025-10-12 20:02:55 root] (build.py 179): INFO train_data_finished!
+[2025-10-12 20:03:28 root] (build.py 187): INFO val_data_finished!
+[2025-10-12 20:03:28 root] (train_net.py 136): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-12 20:03:28 root] (train_net.py 141): INFO Use distillation in training
+[2025-10-12 20:03:28 root] (train_net.py 149): INFO Use tip adapter in training
+[2025-10-12 20:03:38 root] (train_net.py 163): INFO total trainable parameters:
+[2025-10-12 20:03:40 root] (train_net.py 191): INFO In epoch:0, loss: 2.0625 acc1: 12.5000, acc3: 37.5000, acc5: 62.5000
+[2025-10-12 20:04:13 root] (test_net.py 15): INFO testing model on data from path:dataset/TBAD/train_files/
+[2025-10-12 20:45:55 root] (main.py 53): INFO Running with config:
+[2025-10-12 20:45:55 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  SEARCH_HP: True
+  SEARCH_SCALE: [12, 5]
+  SEARCH_STEP: [200, 20]
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 20:45:55 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 20:45:58 root] (main.py 40): INFO building xxx_model...
+[2025-10-12 20:46:01 root] (main.py 43): INFO loading dataloaders...
+[2025-10-12 20:46:37 root] (build.py 171): INFO test_data_finished!
+[2025-10-12 20:46:42 root] (build.py 179): INFO train_data_finished!
+[2025-10-12 20:47:16 root] (build.py 187): INFO val_data_finished!
+[2025-10-12 20:47:16 root] (train_net.py 136): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-12 20:47:16 root] (train_net.py 141): INFO Use distillation in training
+[2025-10-12 20:47:16 root] (train_net.py 149): INFO Use tip adapter in training
+[2025-10-12 20:47:47 root] (train_net.py 163): INFO total trainable parameters:
+[2025-10-12 20:47:50 root] (train_net.py 191): INFO In epoch:0, loss: 1.998046875 acc1: 25.0000, acc3: 50.0000, acc5: 75.0000
+[2025-10-12 21:03:45 root] (main.py 53): INFO Running with config:
+[2025-10-12 21:03:45 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  SEARCH_HP: True
+  SEARCH_SCALE: [12, 5]
+  SEARCH_STEP: [200, 20]
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 21:03:45 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 21:03:49 root] (main.py 40): INFO building xxx_model...
+[2025-10-12 21:03:51 root] (main.py 43): INFO loading dataloaders...
+[2025-10-12 21:04:26 root] (build.py 171): INFO test_data_finished!
+[2025-10-12 21:04:31 root] (build.py 179): INFO train_data_finished!
+[2025-10-12 21:05:05 root] (build.py 187): INFO val_data_finished!
+[2025-10-12 21:05:05 root] (train_net.py 136): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-12 21:05:05 root] (train_net.py 141): INFO Use distillation in training
+[2025-10-12 21:05:05 root] (train_net.py 149): INFO Use tip adapter in training
+[2025-10-12 21:05:15 root] (train_net.py 163): INFO total trainable parameters:
+[2025-10-12 21:06:26 root] (train_net.py 191): INFO In epoch:0, loss: 2.001953125 acc1: 37.5000, acc3: 50.0000, acc5: 75.0000
+[2025-10-12 21:18:29 root] (main.py 53): INFO Running with config:
+[2025-10-12 21:18:29 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  SEARCH_HP: True
+  SEARCH_SCALE: [12, 5]
+  SEARCH_STEP: [200, 20]
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 21:18:29 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 21:18:32 root] (main.py 40): INFO building xxx_model...
+[2025-10-12 21:18:35 root] (main.py 43): INFO loading dataloaders...
+[2025-10-12 21:19:10 root] (build.py 171): INFO test_data_finished!
+[2025-10-12 21:19:16 root] (build.py 179): INFO train_data_finished!
+[2025-10-12 21:19:50 root] (build.py 187): INFO val_data_finished!
+[2025-10-12 21:19:50 root] (train_net.py 142): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-12 21:19:50 root] (train_net.py 147): INFO Use distillation in training
+[2025-10-12 21:19:50 root] (train_net.py 155): INFO Use tip adapter in training
+[2025-10-12 21:20:00 root] (train_net.py 169): INFO total trainable parameters:
+[2025-10-12 21:20:03 root] (train_net.py 197): INFO In epoch:0, loss: 2.021484375 acc1: 25.0000, acc3: 50.0000, acc5: 62.5000
+[2025-10-12 21:24:04 root] (main.py 53): INFO Running with config:
+[2025-10-12 21:24:04 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  SEARCH_HP: True
+  SEARCH_SCALE: [12, 5]
+  SEARCH_STEP: [200, 20]
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 21:24:04 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 21:24:07 root] (main.py 40): INFO building xxx_model...
+[2025-10-12 21:24:10 root] (main.py 43): INFO loading dataloaders...
+[2025-10-12 21:24:44 root] (build.py 171): INFO test_data_finished!
+[2025-10-12 21:24:50 root] (build.py 179): INFO train_data_finished!
+[2025-10-12 21:25:22 root] (build.py 187): INFO val_data_finished!
+[2025-10-12 21:25:22 root] (train_net.py 142): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-12 21:25:22 root] (train_net.py 147): INFO Use distillation in training
+[2025-10-12 21:25:22 root] (train_net.py 155): INFO Use tip adapter in training
+[2025-10-12 21:25:32 root] (train_net.py 169): INFO total trainable parameters:
+[2025-10-12 21:26:17 root] (main.py 53): INFO Running with config:
+[2025-10-12 21:26:17 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  SEARCH_HP: True
+  SEARCH_SCALE: [12, 5]
+  SEARCH_STEP: [200, 20]
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 21:26:17 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 21:26:20 root] (main.py 40): INFO building xxx_model...
+[2025-10-12 21:26:23 root] (main.py 43): INFO loading dataloaders...
+[2025-10-12 21:26:57 root] (build.py 171): INFO test_data_finished!
+[2025-10-12 21:27:02 root] (build.py 179): INFO train_data_finished!
+[2025-10-12 21:27:34 root] (build.py 187): INFO val_data_finished!
+[2025-10-12 21:27:34 root] (train_net.py 142): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-12 21:27:34 root] (train_net.py 147): INFO Use distillation in training
+[2025-10-12 21:27:34 root] (train_net.py 155): INFO Use tip adapter in training
+[2025-10-12 21:27:44 root] (train_net.py 169): INFO total trainable parameters:
+[2025-10-12 21:27:47 root] (train_net.py 197): INFO In epoch:0, loss: 2.087890625 acc1: 0.0000, acc3: 37.5000, acc5: 50.0000
+[2025-10-12 21:46:28 root] (main.py 53): INFO Running with config:
+[2025-10-12 21:46:28 root] (main.py 54): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 8
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 1
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 1
+  LABEL_SMOOTH: 1
+  LP: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  SEARCH_HP: True
+  SEARCH_SCALE: [12, 5]
+  SEARCH_STEP: [200, 20]
+  TRAIN_EPOCH: 15
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 4
+  EPOCHS: 1
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-10-12 21:46:28 root] (main.py 35): INFO loading raw_clip...
+[2025-10-12 21:46:31 root] (main.py 40): INFO building xxx_model...
+[2025-10-12 21:46:33 root] (main.py 43): INFO loading dataloaders...
+[2025-10-12 21:47:06 root] (build.py 171): INFO test_data_finished!
+[2025-10-12 21:47:11 root] (build.py 179): INFO train_data_finished!
+[2025-10-12 21:47:44 root] (build.py 187): INFO val_data_finished!
+[2025-10-12 21:47:44 root] (train_net.py 141): INFO training model on data from path:dataset/TBAD/train_files/
+[2025-10-12 21:47:44 root] (train_net.py 146): INFO Use distillation in training
+[2025-10-12 21:47:44 root] (train_net.py 154): INFO Use tip adapter in training
+[2025-10-12 21:47:54 root] (train_net.py 168): INFO total trainable parameters:
+[2025-10-12 21:47:56 root] (train_net.py 196): INFO In epoch:0, loss: 2.02880859375 acc1: 25.0000, acc3: 50.0000, acc5: 62.5000
+[2025-10-12 21:53:11 root] (test_net.py 15): INFO testing model on data from path:dataset/TBAD/train_files/

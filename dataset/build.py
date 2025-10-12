@@ -149,7 +149,6 @@ def build_dataloader(config, logger, is_tip=False):
     if is_tip:
         ann_file = os.path.join(config.TIP_ADAPTER.DATA_FILE, 'tip_{}shot.txt'.format(config.DATA.SHOTS))
 
-        logger.info('use tip adapter in training')
         tip_data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=ann_file,
                                   shot=config.DATA.SHOTS, type='train')
         sampler_test = SubsetRandomSampler(np.arange(len(tip_data)))

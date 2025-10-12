@@ -6,33 +6,129 @@ from models.clip.clip import tokenize
 from ultralytics import cfg
 
 
-class multi_level_conv(nn.Module):
-    def __init__(self,input_dim,output_dim,device):
-        self.device = device
-        self.input_dim = input_dim
-        self.output_dim = output_dim
+class SpatioTemporalFeatureExtractor(nn.Module):
+    def __init__(self, feature_dim, hidden_dim=None, num_heads=4, dropout=0.1):
+        """
+        参数:
+            feature_dim: 输入特征维度
+            hidden_dim: 隐藏层维度，默认与feature_dim相同
+            num_heads: 多头注意力的头数
+        """
+        super().__init__()
+        self.feature_dim = feature_dim
+        self.hidden_dim = hidden_dim if hidden_dim is not None else feature_dim
 
+        self.time_conv = nn.Sequential(
+            nn.Conv1d(
+                in_channels=self.feature_dim,
+                out_channels=self.hidden_dim,
+                kernel_size=3,
+                stride=1,
+                padding=1
+            ),
+            nn.LayerNorm(self.hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(dropout)
+        )
 
-    def init_convs(self):
-        pass
-    
+        # 空间注意力 - 使用多头自注意力捕捉特征间的关联
+        self.attention = nn.MultiheadAttention(
+            embed_dim=self.hidden_dim,
+            num_heads=num_heads,
+            dropout=dropout,
+            batch_first=True
+        )
+
+        # 前馈网络
+        self.feed_forward = nn.Sequential(
+            nn.Linear(self.hidden_dim, self.hidden_dim * 2),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(self.hidden_dim * 2, self.hidden_dim)
+        )
+
+        # 残差连接的层归一化
+        self.norm1 = nn.LayerNorm(self.hidden_dim)
+        self.norm2 = nn.LayerNorm(self.hidden_dim)
+
+        # 最终输出投影
+        self.output_proj = nn.Linear(self.hidden_dim, self.feature_dim)
+
     def forward(self, x):
-        pass
+        """
+        前向传播
+
+        参数:
+            x: 输入特征，形状为[batchsize, num_frames, feature_dim]
+
+        返回:
+            输出特征，形状为[batchsize, num_frames, feature_dim]
+        """
+        # 保存残差连接
+        residual = x
+
+        # 时间卷积需要调整维度 [batch, num_frames, feature_dim] -> [batch, feature_dim, num_frames]
+        x_time = x.permute(0, 2, 1)
+        x_time = self.time_conv(x_time)
+        # 转换回原来的维度 [batch, num_frames, hidden_dim]
+        x = x_time.permute(0, 2, 1)
+
+        # 残差连接 + 层归一化
+        x = self.norm1(x + residual)
+
+        # 保存残差连接
+        residual = x
+
+        # 自注意力机制
+        attn_output, _ = self.attention(x, x, x)
+        x = attn_output
+
+        # 残差连接 + 层归一化
+        x = self.norm2(x + residual)
+
+        # 保存残差连接
+        residual = x
+
+        # 前馈网络
+        x = self.feed_forward(x)
+
+        # 残差连接
+        x = x + residual
+
+        # 投影回原始特征维度
+        x = self.output_proj(x)
+
+        return x
 
 
 
 class xxx_clip(nn.Module):
-    def __init__(self, config, device):
+    def __init__(self, config, device, is_teacher:bool):
         super().__init__()
         self.device = device
-        self.clip = get_clip(config,is_teacher=False)
+        self.config = config
+        self.clip = get_clip(config,is_teacher=is_teacher)
         self.class_names = load_class_names(config.DATA.CLASS_NAMES)
-        self.text_encoder = TextEncoder(config, self.class_names, self.clip, self.device)
-        self.image_encoder = ImageEncoder(config, self.clip, self.device)
+        self.is_teacher = is_teacher
+        self.init_model()
+        self.output_dim = self.clip.visual.output_dim
+
+    def init_model(self):
+        self.text_encoder = TextEncoder(self.config, self.class_names, self.clip, self.device)
+        self.image_encoder = ImageEncoder(self.config, self.clip, self.device, self.is_teacher)
+        if self.is_teacher:
+            for k,v in self.text_encoder.named_parameters():
+                v.requires_grad = False
+            for k,v in self.image_encoder.named_parameters():
+                v.requires_grad = False
+        return None
 
     @property
     def dtype(self):
         return self.clip.dtype
+
+    def encode_image(self, img):
+        return self.image_encoder(img)
 
     def forward(self, img):
         '''
@@ -64,13 +160,14 @@ class TextEncoder(nn.Module):
         return tokens
 
     def forward(self, image_features):
-        '''image_features haven't been normalized'''
+        '''image_features already normalized'''
         text_features = self._forward(self._tokens)
         text_features = text_features / text_features.norm(dim=-1, keepdim=True)
 
-        image_features = image_features / image_features.norm(dim=-1, keepdim=True)
-
-        logits = (100.0 * image_features @ text_features.t()).softmax(dim=-1)
+        # logits = (100.0 * image_features @ text_features.t()).softmax(dim=-1)
+        logits = image_features @ text_features.t()
+        logits = 100. * logits
+        logits = logits.softmax(dim=-1)
 
         return text_features, logits
 
@@ -92,7 +189,7 @@ class TextEncoder(nn.Module):
 
 
 class ImageEncoder(nn.Module):
-    def __init__(self, config, clip_model, device):
+    def __init__(self, config, clip_model, device, is_teacher:bool):
         super().__init__()
         self.clip_model = clip_model
         self.dtype = clip_model.dtype
@@ -102,6 +199,7 @@ class ImageEncoder(nn.Module):
         self.num_frames = config.DATA.NUM_FRAMES
         self.linear = nn.Linear(self.output_dim, self.output_dim).to(self.device).to(torch.float16)
         self.num_frames = config.DATA.NUM_FRAMES
+        self.is_teacher = is_teacher
 
 
     def forward(self, x):
@@ -110,11 +208,15 @@ class ImageEncoder(nn.Module):
             x: raw image, tensor shape [bz * num_frames, 3, H, W]
         Returns:
             either through mean pooling or modules to be built
-            video_encode: tensor shape [bz, output_dim]  (not yet normalized)
+            video_encode: tensor shape [bz, output_dim] if student model
+                          tensor shape [bz * num_frames, output_dim] if teacher model
         '''
         video_encode = self.clip_model.encode_image(x)
+        video_encode = video_encode / video_encode.norm(dim=-1, keepdim=True)
         video_encode = video_encode.reshape(-1, self.num_frames, self.output_dim) # shape = [bz, num_frames, output_dim]
-
+        if self.is_teacher:
+            '''教师模型应该是原始clip'''
+            return video_encode
         #TODO 直接mean_pooling效果不行，找一个可以结合时空信息的模块
         video_encode = video_encode.mean(dim=1)
         return video_encode
