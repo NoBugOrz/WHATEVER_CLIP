@@ -21,9 +21,9 @@ MODEL:
     LP: 1
     USE_DISTILLATION: 1
 TRAIN:
-    BATCH_SIZE: 4 # BS 64
+    BATCH_SIZE: 8 # BS 64
     ACCUMULATION_STEPS: 2
-    EPOCHS: 1
+    EPOCHS: 20
     LR: 0.001
 TEXT_PROMPT:
     N_CTX_PRE: 8
@@ -38,7 +38,7 @@ TIP_ADAPTER:
     LOAD_CACHE: 0
     DATA_FILE: 'dataset/TBAD/train_files/'
     AUG_EPOCH: 1
-    TRAIN_EPOCH: 15
+    TRAIN_EPOCH: 1
 
     SEARCH_HP: True
     SEARCH_SCALE: [12, 5]

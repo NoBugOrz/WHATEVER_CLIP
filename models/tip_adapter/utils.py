@@ -19,7 +19,7 @@ def build_cache_model(cfg, clip_model, train_loader_cache):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     # bz = cfg.TRAIN.BATCH_SIZE
     num_frames = cfg.DATA.NUM_FRAMES
-    output_dim = clip_model.output_dim # 也就是特征维度feature_dim
+    output_dim = clip_model.visual.output_dim # 也就是特征维度feature_dim
     if cfg.TIP_ADAPTER.LOAD_CACHE == False:
         cache_keys = []
         cache_values = []

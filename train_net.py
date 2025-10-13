@@ -13,6 +13,7 @@ from dataset.build import build_dataloader
 import torch.nn as nn
 import torch.nn.functional as F
 from models.tip_adapter.utils import cls_acc,search_hp
+from models.xxx_clip import get_clip
 
 # torch.autograd.set_detect_anomaly(True)
 
@@ -153,10 +154,11 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
         '''
         logger.info('Use tip adapter in training')
         tip_data, tip_loader = build_dataloader(cfg, logger, is_tip=True)
-        cache_keys, cache_values = build_cache_model(cfg=cfg,clip_model=teacher_model,train_loader_cache=tip_loader)
+        raw_clip_model = get_clip(cfg, is_teacher=True)
+        cache_keys, cache_values = build_cache_model(cfg=cfg,clip_model=raw_clip_model,train_loader_cache=tip_loader)
 
     student_model.train()
-    optimizer = torch.optim.Adam(student_model.parameters(), lr=cfg.TRAIN.LR, eps=1e-4)
+    optimizer = torch.optim.AdamW(student_model.parameters(), lr=cfg.TRAIN.LR, eps=1e-4)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, cfg.TRAIN.EPOCHS * len(train_loader))
     criterion = torch.nn.CrossEntropyLoss()
 
@@ -188,8 +190,9 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
             loss = criterion(logits, labels)
 
             loss_list.append(loss.item())
-            optimizer.zero_grad()
+
             loss.backward()
+            optimizer.zero_grad()
             optimizer.step()
             scheduler.step()
 
