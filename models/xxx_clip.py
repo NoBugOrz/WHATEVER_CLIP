@@ -7,9 +7,77 @@ from ultralytics import cfg
 import torch.nn.functional as F
 from torch.nn.init import kaiming_normal_, xavier_normal_, constant_
 
+class QuickGELU(nn.Module):
+    def forward(self, x: torch.Tensor):
+        return x * torch.sigmoid(1.702 * x)
+
+class AttentionBlock(nn.Module):
+    """
+    single attention block with
+    {
+    self_attention,
+    bottle_neck feed forward,(1 -> 2 -> 1)
+    residual connection
+    }
+    """
+
+    def __init__(self, hidden_dim, num_heads, device, dropout=0.1):
+        super().__init__()
+        self.attention = nn.MultiheadAttention(
+            embed_dim=hidden_dim,
+            num_heads=num_heads,
+            dropout=dropout,
+            batch_first=True
+        ).to(device)
+        self.feed_forward = nn.Sequential(
+            nn.Linear(hidden_dim, hidden_dim * 2),
+            QuickGELU(),
+            nn.Dropout(dropout),
+            nn.Linear(hidden_dim * 2, hidden_dim)
+        ).to(device)
+        self.norm1 = nn.LayerNorm(hidden_dim).to(device)  # 注意力后归一化
+        self.norm2 = nn.LayerNorm(hidden_dim).to(device)  # 前馈网络后归一化
+        self.dropout1 = nn.Dropout(dropout).to(device)  # 注意力输出dropout
+        self.dropout2 = nn.Dropout(dropout).to(device)  # 前馈网络输出dropout
+
+        # 初始化当前块参数
+        self._initialize_block()
+
+    def _initialize_block(self):
+        # 注意力层初始化
+        for name, param in self.attention.named_parameters():
+            if 'weight' in name:
+                xavier_normal_(param, gain=0.02)
+            elif 'bias' in name:
+                constant_(param, 0.0)
+
+        # 前馈网络初始化
+        for m in self.feed_forward:
+            if isinstance(m, nn.Linear):
+                xavier_normal_(m.weight, gain=1.0)
+                if m.bias is not None:
+                    constant_(m.bias, 0.0)
+
+        # 归一化层初始化
+        for m in [self.norm1, self.norm2]:
+            constant_(m.weight, 1.0)
+            constant_(m.bias, 0.0)
+
+    def forward(self, x):
+        # multi-attention
+        attn_output, _ = self.attention(x, x, x)
+        # residual connection and layer norm
+        x = self.norm1(x + self.dropout1(attn_output))
+
+        # feed_forward
+        ff_output = self.feed_forward(x)
+        # residual connection and layer norm
+        x = self.norm2(x + self.dropout2(ff_output))
+
+        return x
 
 class SpatioTemporalAggregator(nn.Module):
-    def __init__(self, feature_dim, device='cuda', hidden_dim=None, num_heads=4, dropout=0.1):
+    def __init__(self, feature_dim, num_attention_blocks, device='cuda', hidden_dim=None, num_heads=4, dropout=0.1):
         """
             feature_dim: 输入输出特征维度
             hidden_dim: 隐藏层维度，默认与feature_dim相同
@@ -20,6 +88,8 @@ class SpatioTemporalAggregator(nn.Module):
         self.feature_dim = feature_dim
         self.hidden_dim = hidden_dim if hidden_dim is not None else feature_dim
         self.device = device
+        self.num_heads = num_heads
+        self.num_attention_blocks = num_attention_blocks
         self.st_feature_extractor = nn.Sequential(
             nn.Conv1d(
                 in_channels=self.feature_dim,
@@ -28,18 +98,18 @@ class SpatioTemporalAggregator(nn.Module):
                 stride=1,
                 padding=1
             ),
-            nn.ReLU(),
-            nn.Dropout(dropout),
-
-            nn.Conv1d(
-                in_channels=self.hidden_dim,
-                out_channels=self.hidden_dim,
-                kernel_size=3,
-                stride=1,
-                padding=1
-            ),
-            nn.ReLU(),
+            QuickGELU(),
             nn.Dropout(dropout)
+
+            # nn.Conv1d(
+            #     in_channels=self.hidden_dim,
+            #     out_channels=self.hidden_dim,
+            #     kernel_size=3,
+            #     stride=1,
+            #     padding=1
+            # ),
+            # QuickGELU(),
+            # nn.Dropout(dropout)
         ).to(device)
 
         self.post_conv_norm = nn.LayerNorm(self.hidden_dim).to(device)
@@ -47,17 +117,19 @@ class SpatioTemporalAggregator(nn.Module):
         # aggregate temporal information
         self.time_attention = nn.Sequential(
             nn.Linear(self.hidden_dim, self.hidden_dim // 2),
-            nn.Tanh(),
+            QuickGELU(),
             nn.Linear(self.hidden_dim // 2, 1)
         ).to(device)
 
         # multi-head attention
-        self.attention = nn.MultiheadAttention(
-            embed_dim=self.hidden_dim,
-            num_heads=num_heads,
-            dropout=dropout,
-            batch_first=True
-        ).to(device)
+        self.attention = nn.Sequential(
+            *[AttentionBlock(
+                hidden_dim=self.hidden_dim,
+                num_heads=self.num_heads,
+                device=self.device,
+                dropout=0.1
+            ) for _ in range(self.num_attention_blocks)]
+        )
 
         self.output_proj = nn.Linear(self.hidden_dim, self.feature_dim).to(device)
 
@@ -66,7 +138,6 @@ class SpatioTemporalAggregator(nn.Module):
         self._initialize_weights()
 
     def _initialize_weights(self):
-        """参数初始化策略"""
         # 1. 卷积层初始化 - 使用Kaiming初始化（适合ReLU激活）
         for m in self.st_feature_extractor:
             if isinstance(m, nn.Conv1d):
@@ -83,14 +154,15 @@ class SpatioTemporalAggregator(nn.Module):
                 if m.bias is not None:
                     constant_(m.bias, 0.0)
 
-        # 3. 多头注意力参数初始化
-        # 对查询/键/值投影矩阵使用特殊初始化
-        for name, param in self.attention.named_parameters():
-            if 'weight' in name:
-                # 注意力机制权重使用较小的初始化范围
-                xavier_normal_(param, gain=0.02)
-            elif 'bias' in name:
-                constant_(param, 0.0)
+        # # 3. 多头注意力参数初始化
+        # # 对查询/键/值投影矩阵使用特殊初始化
+        # for block in self.attention:
+        #     for name, param in block.named_parameters():
+        #         if 'weight' in name:
+        #             # 注意力机制权重使用较小的初始化范围
+        #             xavier_normal_(param, gain=0.02)
+        #         elif 'bias' in name:
+        #             constant_(param, 0.0)
 
         # 4. 输出投影层初始化
         if isinstance(self.output_proj, nn.Linear):
@@ -120,7 +192,7 @@ class SpatioTemporalAggregator(nn.Module):
         x = x_time.permute(0, 2, 1)
         x = self.post_conv_norm(x)
 
-        attn_output, _ = self.attention(x, x, x)
+        attn_output = self.attention(x)
         x = self.norm(x + attn_output)  # residual
 
         # 3. 时间维度聚合 - 注意力加权池化
@@ -134,7 +206,7 @@ class SpatioTemporalAggregator(nn.Module):
         # project to output dim
         global_feature = self.output_proj(global_feature)
 
-        return global_feature.to(torch.half)
+        return global_feature.to(torch.float32)
 
 
 
@@ -153,17 +225,31 @@ class xxx_clip(nn.Module):
     def init_model(self):
         self.text_encoder = TextEncoder(self.config, self.class_names, self.clip, self.device)
         self.image_encoder = ImageEncoder(self.config, self.clip, self.device, self.is_teacher)
-        # if self.is_teacher:
-        for k,v in self.text_encoder.named_parameters():
-            v.requires_grad = False
-        for k,v in self.image_encoder.named_parameters():
-            v.requires_grad = False
+        if self.is_teacher:
+            for k,v in self.text_encoder.named_parameters():
+                v.requires_grad = False
+            for k,v in self.image_encoder.named_parameters():
+                v.requires_grad = False
+
         if not self.is_teacher:
             self.spatial_temporal_module = SpatioTemporalAggregator(feature_dim=self.output_dim,
+                                                                    num_attention_blocks=1,
+                                                                    device=self.device,
                                                                     hidden_dim=self.output_dim,
                                                                     num_heads=4,
                                                                     dropout=0.1
                                                                     )
+            for k,v in self.text_encoder.named_parameters():
+                if '11' in k:
+                    v.requires_grad = True
+                else:
+                    v.requires_grad = False
+            for k,v in self.image_encoder.named_parameters():
+                if '11' in k:
+                    v.requires_grad = True
+                else:
+                    v.requires_grad = False
+
 
     @property
     def dtype(self):
@@ -241,7 +327,7 @@ class TextEncoder(nn.Module):
         # take features from the eot embedding (eot_token is the highest number in each sequence)
         x = x[torch.arange(x.shape[0]), text.argmax(dim=-1)] @ self.clip_model.text_projection
 
-        return x
+        return x.to(torch.float32)
 
 
 
@@ -254,7 +340,7 @@ class ImageEncoder(nn.Module):
         self.device = device
         # self.batch_size = config.TRAIN.BATCH_SIZE
         self.num_frames = config.DATA.NUM_FRAMES
-        self.linear = nn.Linear(self.output_dim, self.output_dim).to(self.device).to(torch.float16)
+        self.linear = nn.Linear(self.output_dim, self.output_dim).to(self.device).to(torch.float32)
         self.num_frames = config.DATA.NUM_FRAMES
         self.is_teacher = is_teacher
 
@@ -268,7 +354,7 @@ class ImageEncoder(nn.Module):
             video_encode: tensor shape [bz, num_frames, output_dim]
         '''
         video_encode = self.clip_model.encode_image(x)
-        video_encode = video_encode / video_encode.norm(dim=-1, keepdim=True)
+        # video_encode = video_encode / video_encode.norm(dim=-1, keepdim=True)
         video_encode = video_encode.reshape(-1, self.num_frames, self.output_dim) # shape = [bz, num_frames, output_dim]
         return video_encode
 

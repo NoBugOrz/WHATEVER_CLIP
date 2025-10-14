@@ -158,8 +158,11 @@ def build_dataloader(config, logger, is_tip=False):
         return tip_data, tip_loader
 
     train_ann_file = os.path.join(config.DATA.TRAIN_FILE, "train_{}shot.txt".format(config.DATA.SHOTS))
-    test_ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(1)) # 1-12,暂时用1
-    val_ann_file = os.path.join(config.DATA.VAL_FILE, "val_8shot.txt")
+    '''debug'''
+    test_ann_file = os.path.join(config.DATA.TRAIN_FILE, "train_{}shot.txt".format(1))
+    val_ann_file = os.path.join(config.DATA.TRAIN_FILE, "train_{}shot.txt".format(1))
+    # test_ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(1)) # 1-12,暂时用1
+    # val_ann_file = os.path.join(config.DATA.VAL_FILE, "val_8shot.txt")
 
     # test_ann_file = train_ann_file # debug，暂时用train
 

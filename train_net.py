@@ -162,6 +162,8 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, cfg.TRAIN.EPOCHS * len(train_loader))
     criterion = torch.nn.CrossEntropyLoss()
 
+    print(f"优化器关联的参数组数量：{len(optimizer.param_groups)}")
+
     batch_size = cfg.TRAIN.BATCH_SIZE
     num_frames = cfg.DATA.NUM_FRAMES
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -191,10 +193,26 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
 
             loss_list.append(loss.item())
 
-            loss.backward()
             optimizer.zero_grad()
+            loss.backward()
+
+            # for name, param in student_model.named_parameters():
+            #     if 'clip' in name:
+            #         continue
+            #     if param.grad is None:
+            #         print(f"参数 {name} 未计算梯度（.grad 为 None）")
+            #     else:
+            #         # 检查梯度是否全为0（允许微小误差，避免浮点精度问题）
+            #         is_zero = torch.allclose(param.grad, torch.zeros_like(param.grad), atol=1e-8)
+            #         if is_zero:
+            #             print(f"参数 {name} 的梯度全为0")
+            #         else:
+            #             # 可选：打印梯度的L2范数（判断梯度是否接近0）
+            #             grad_norm = param.grad.norm().item()
+            #             print(f"参数 {name} 的梯度非零，L2范数: {grad_norm:.6f}")
+
             optimizer.step()
-            scheduler.step()
+        scheduler.step()
 
         logger.info(f"In epoch:{cur_epoch}, loss: {torch.tensor(loss_list).mean().item()}"
                     f" acc1: {np.array(acc_dic['acc1']).mean():.4f},"
