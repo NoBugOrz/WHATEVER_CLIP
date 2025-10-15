@@ -6,15 +6,14 @@ from tqdm import tqdm
 from utils import show_image
 from utils.show_image import save_image,show_image
 from utils.validate import validate
-from utils.tools import save_model
-from utils.tools import extract_from_batch_data
+from utils.tools import save_model, extract_from_batch_data
 from models.tip_adapter.utils import build_cache_model
 from dataset.build import build_dataloader
 import torch.nn as nn
 import torch.nn.functional as F
 from models.tip_adapter.utils import cls_acc
 
-torch.autograd.set_detect_anomaly(True)
+# torch.autograd.set_detect_anomaly(True)
 
 def pre_load_features(model, loader):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -28,12 +27,17 @@ def pre_load_features(model, loader):
 
         features.append(image_features)
         labels.append(target)
+        logits.append(clip_logits)
 
     video_features, labels, text_features = torch.cat(features), torch.cat(labels), text_features
 
     return video_features, labels, text_features
 
 def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader, val_features, clip_weights, test_labels):
+    return torch.cat(features), torch.cat(labels), torch.cat(logits)
+
+def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader,
+                      val_features, val_labels, test_features, test_labels, clip_weights, test_logits):
     '''
     train and save tip_adapter model
     cache_keys: tensor shape=[512, 8]
@@ -54,6 +58,7 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, trai
     # make sure the student model is frozen, only adapter is trained
     student_model.eval()
     adapter.train()
+
 
     for train_idx in range(cfg.TIP_ADAPTER.TRAIN_EPOCH):
         adapter.train()
@@ -111,7 +116,13 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, trai
         #     best_epoch = train_idx
         #     torch.save(adapter.weight, cfg['cache_dir'] + "/best_F_" + str(cfg['shots']) + "shots.pt")
 
-    adapter.weight = torch.load(cfg['cache_dir'] + "/best_F_" + str(cfg['shots']) + "shots.pt")
+        print("**** tip_adapter-F's test accuracy: {:.2f}. ****\n".format(acc))
+        if acc > best_acc:
+            best_acc = acc
+            best_epoch = train_idx
+            torch.save(adapter.weight, cfg.CACHE_DIR + "/best_F_" + str(cfg.DATA.SHOTS) + "shots.pt")
+
+    adapter.weight = torch.load(cfg.CACHE_DIR + "/best_F_" + str(cfg.DATA.SHOTS) + "shots.pt")
     print(f"**** After fine-tuning, tip_adapter-F's best test accuracy: {best_acc:.2f}, at epoch: {best_epoch}. ****\n")
 
     print("\n-------- Searching hyperparameters on the val set. --------")
@@ -131,13 +142,15 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, trai
 
 
 
-def train(cfg, logger, train_loader, val_loader, student_model, teacher_model=None):
+def train(cfg, logger, train_loader, test_loader, val_loader, student_model, teacher_model=None):
     '''
     Training the student model on the given dataset.
     '''
     logger.info('training model on data from path:{}'.format(cfg.DATA.TRAIN_FILE))
 
     module_list = []
+    if student_model.spatial_temporal_module is not None:
+        module_list.append('spatial_temporal_module')
 
     if teacher_model is not None:
         logger.info('Use distillation in training')
@@ -149,13 +162,19 @@ def train(cfg, logger, train_loader, val_loader, student_model, teacher_model=No
         this part should be added when final logits are calculated
         '''
         logger.info('Use tip adapter in training')
+        module_list.append('Tip_Adapter')
         tip_data, tip_loader = build_dataloader(cfg, logger, is_tip=True)
-        cache_keys, cache_values = build_cache_model(cfg=cfg,clip_model=teacher_model,train_loader_cache=tip_loader)
+        raw_clip_model = get_clip(cfg, is_teacher=True)
+        cache_keys, cache_values = build_cache_model(cfg=cfg,clip_model=raw_clip_model,train_loader_cache=tip_loader)
 
     student_model.train()
-    optimizer = torch.optim.Adam(student_model.parameters(), lr=cfg.TRAIN.LR, eps=1e-4)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, cfg.TRAIN.EPOCHS * len(train_loader))
+    optimizer = torch.optim.AdamW(student_model.parameters(), lr=cfg.TRAIN.LR, eps=1e-4)
+    scheduler = WarmupScheduler(optimizer=optimizer,warmup_epochs=int(cfg.TRAIN.EPOCHS * 0.3),total_epochs=cfg.TRAIN.EPOCHS,
+                                target_lr=cfg.TRAIN.LR,warmup_type='cosine',min_lr=cfg.TRAIN.LR * 0.02)
+    # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, cfg.TRAIN.EPOCHS * len(train_loader))
     criterion = torch.nn.CrossEntropyLoss()
+
+    print(f"优化器关联的参数组数量：{len(optimizer.param_groups)}")
 
     batch_size = cfg.TRAIN.BATCH_SIZE
     num_frames = cfg.DATA.NUM_FRAMES
@@ -167,17 +186,14 @@ def train(cfg, logger, train_loader, val_loader, student_model, teacher_model=No
         if v.requires_grad:
             print(k)
 
-
     for cur_epoch in range(cfg.TRAIN.EPOCHS):
+        student_model.train()
         loss_list = []
         acc_dic = {'acc1':[], 'acc3':[], 'acc5':[]}
         for idx, batch_data in enumerate(train_loader):
             images, labels = extract_from_batch_data(batch_data,device) # images: tensor shape=[*, c, h, w],labels tensor shape=[bz]
             image_features, text_features, logits = student_model(images)
             probs = logits.softmax(dim=-1)
-            # save_image(images)
-            # show_image(images)
-            preds = torch.argmax(probs, dim=1)
             acc1, acc3, acc5 = validate(probs, labels,acc_only=True)
             acc_dic['acc1'].append(acc1)
             acc_dic['acc3'].append(acc3)
@@ -185,15 +201,36 @@ def train(cfg, logger, train_loader, val_loader, student_model, teacher_model=No
             loss = criterion(logits, labels)
 
             loss_list.append(loss.item())
+
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
             scheduler.step()
+        if cur_epoch % 5 == 0:
+            logger.info(f"In epoch:{cur_epoch}, loss: {torch.tensor(loss_list).mean().item()}"
+                        f" acc1: {np.array(acc_dic['acc1']).mean():.4f},"
+                        f" acc3: {np.array(acc_dic['acc3']).mean():.4f},"
+                        f" acc5: {np.array(acc_dic['acc5']).mean():.4f}")
 
-        logger.info(f"In epoch:{cur_epoch}, loss: {torch.tensor(loss_list).mean().item()}"
-                    f" acc1: {np.array(acc_dic['acc1']).mean():.4f},"
-                    f" acc3: {np.array(acc_dic['acc3']).mean():.4f},"
-                    f" acc5: {np.array(acc_dic['acc5']).mean():.4f}")
+        # eval
+        if cur_epoch % 5 == 0:
+            student_model.eval()
+            val_acc_dic = {'acc1': [], 'acc3': [], 'acc5': []}
+            for idx, batch_data in enumerate(test_loader):
+                images, labels = extract_from_batch_data(batch_data,device)
+                image_features, text_features, logits = student_model(images)
+                probs = logits.softmax(dim=-1)
+                val_acc1, val_acc3, val_acc5 = validate(probs, labels, acc_only=True)
+                val_acc_dic['acc1'].append(val_acc1)
+                val_acc_dic['acc3'].append(val_acc3)
+                val_acc_dic['acc5'].append(val_acc5)
+
+            logger.info(f"validation:  "
+                f" acc1: {np.array(val_acc_dic['acc1']).mean():.4f},"
+                f" acc3: {np.array(val_acc_dic['acc3']).mean():.4f},"
+                f" acc5: {np.array(val_acc_dic['acc5']).mean():.4f}")
+            student_model.train()
+
 
     if cfg.TIP_ADAPTER.USE_TIP_ADAPTER == True:
         val_features, val_labels, text_features = pre_load_features(student_model, val_loader) # val_features [num_samples, 512]

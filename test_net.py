@@ -12,7 +12,7 @@ def test(cfg, logger, test_loader, student_model):
     '''
     Testing the student model on the given dataset.
     '''
-    logger.info('testing model on data from path:{}'.format(cfg.DATA.TRAIN_FILE))
+    logger.info('testing model on data from path:{}'.format(cfg.DATA.TEST_FILE))
 
     student_model.eval()
 
@@ -35,4 +35,9 @@ def test(cfg, logger, test_loader, student_model):
     logit_dic['model_logits'] = torch.cat(logit_dic['model_logits'])
 
     acc1, acc3, acc5, auc, f1 = validate(logit_dic['model_logits'], labels, plot=False, acc_only = False)
-    print(111)
+    logger.info('test finished')
+    print('acc1:', acc1,
+          'acc3:', acc3,
+          'acc5:', acc5,
+          'auc:', auc,
+          'f1:', f1)
