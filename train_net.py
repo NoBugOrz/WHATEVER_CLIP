@@ -14,6 +14,8 @@ import torch.nn.functional as F
 from models.tip_adapter.utils import cls_acc,search_hp
 from models.xxx_clip import get_clip
 from utils.scheduler import WarmupScheduler
+from timm.loss import LabelSmoothingCrossEntropy
+import os
 
 # torch.autograd.set_detect_anomaly(True)
 
@@ -165,7 +167,7 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
     scheduler = WarmupScheduler(optimizer=optimizer,warmup_epochs=int(cfg.TRAIN.EPOCHS * 0.3),total_epochs=cfg.TRAIN.EPOCHS,
                                 target_lr=cfg.TRAIN.LR,warmup_type='cosine',min_lr=cfg.TRAIN.LR * 0.02)
     # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, cfg.TRAIN.EPOCHS * len(train_loader))
-    criterion = torch.nn.CrossEntropyLoss()
+    criterion = LabelSmoothingCrossEntropy() # torch.nn.CrossEntropyLoss()
 
     print(f"优化器关联的参数组数量：{len(optimizer.param_groups)}")
 
@@ -223,7 +225,7 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
                 f" acc3: {np.array(val_acc_dic['acc3']).mean():.4f},"
                 f" acc5: {np.array(val_acc_dic['acc5']).mean():.4f}")
             student_model.train()
-
+    torch.save(student_model.state_dict(), os.path.join(cfg.CACHE_DIR, 'student_model_{}shots.pth'.format(cfg.DATA.SHOTS)))
 
     if cfg.TIP_ADAPTER.USE_TIP_ADAPTER == True:
         val_features, val_labels, val_logits = pre_load_features(student_model, val_loader)  # [num_samples, 512]

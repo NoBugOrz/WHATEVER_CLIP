@@ -12,7 +12,7 @@ DATA:
     CLASS_NAMES: 'dataset/TBAD/class_names.json'
     SHOTS: 8
 MODEL:
-    ARCH: ViT-L/14
+    ARCH: ViT-B/16
     YOLO: 'Yolo-model/yolov8n.pt'
     IF_TEACHER: 1
     ZS: 0
@@ -21,9 +21,9 @@ MODEL:
     LP: 1
     USE_DISTILLATION: 1
 TRAIN:
-    BATCH_SIZE: 8 # BS 64
+    BATCH_SIZE: 4 # BS 64
     ACCUMULATION_STEPS: 2
-    EPOCHS: 100
+    EPOCHS: 70
     LR: 0.001
 TEXT_PROMPT:
     N_CTX_PRE: 8
@@ -37,8 +37,8 @@ TIP_ADAPTER:
   # if loading cached kv
     LOAD_CACHE: 0
     DATA_FILE: 'dataset/TBAD/train_files/'
-    AUG_EPOCH: 1
-    TRAIN_EPOCH: 1
+    AUG_EPOCH: 5
+    TRAIN_EPOCH: 20
 
     SEARCH_HP: True
     SEARCH_SCALE: [12, 5]
