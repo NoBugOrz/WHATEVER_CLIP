@@ -60,7 +60,7 @@ def build_cache_model(cfg, clip_model, train_loader_cache):
         cache_keys = torch.load(cfg.CACHE_DIR + '/keys_' + str(cfg.DATA.SHOTS) + "shots.pt")
         cache_values = torch.load(cfg.CACHE_DIR + '/values_' + str(cfg.DATA.SHOTS) + "shots.pt")
 
-    return cache_keys, cache_values
+    return cache_keys.to(torch.float32), cache_values.to(torch.float32)
 
 
 def pre_load_features(cfg, split, clip_model, loader):

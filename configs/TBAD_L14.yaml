@@ -12,7 +12,7 @@ DATA:
     CLASS_NAMES: 'dataset/TBAD/class_names.json'
     SHOTS: 8
 MODEL:
-    ARCH: ViT-B/16
+    ARCH: ViT-L/14
     YOLO: 'Yolo-model/yolov8n.pt'
     IF_TEACHER: 1
     ZS: 0
@@ -24,7 +24,7 @@ TRAIN:
     BATCH_SIZE: 8 # BS 64
     ACCUMULATION_STEPS: 2
     EPOCHS: 100
-    LR: 0.002
+    LR: 0.001
 TEXT_PROMPT:
     N_CTX_PRE: 8
     CTX_PRE_INIT: "x x x x x x x x"

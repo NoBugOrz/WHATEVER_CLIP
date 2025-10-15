@@ -6,6 +6,7 @@ from models.clip.clip import tokenize
 from ultralytics import cfg
 import torch.nn.functional as F
 from torch.nn.init import kaiming_normal_, xavier_normal_, constant_
+import numpy as np
 
 class QuickGELU(nn.Module):
     def forward(self, x: torch.Tensor):
@@ -99,17 +100,17 @@ class SpatioTemporalAggregator(nn.Module):
                 padding=1
             ),
             QuickGELU(),
-            nn.Dropout(dropout)
+            nn.Dropout(dropout),
 
-            # nn.Conv1d(
-            #     in_channels=self.hidden_dim,
-            #     out_channels=self.hidden_dim,
-            #     kernel_size=3,
-            #     stride=1,
-            #     padding=1
-            # ),
-            # QuickGELU(),
-            # nn.Dropout(dropout)
+            nn.Conv1d(
+                in_channels=self.hidden_dim,
+                out_channels=self.hidden_dim,
+                kernel_size=3,
+                stride=1,
+                padding=1
+            ),
+            QuickGELU(),
+            nn.Dropout(dropout)
         ).to(device)
 
         self.post_conv_norm = nn.LayerNorm(self.hidden_dim).to(device)
@@ -150,7 +151,7 @@ class SpatioTemporalAggregator(nn.Module):
         for m in self.time_attention:
             if isinstance(m, nn.Linear):
                 # 针对Tanh激活使用Xavier初始化
-                xavier_normal_(m.weight, gain=1.0)
+                xavier_normal_(m.weight, gain=0.5)
                 if m.bias is not None:
                     constant_(m.bias, 0.0)
 
@@ -167,7 +168,7 @@ class SpatioTemporalAggregator(nn.Module):
         # 4. 输出投影层初始化
         if isinstance(self.output_proj, nn.Linear):
             # 保持输出尺度与输入一致
-            xavier_normal_(self.output_proj.weight, gain=1.0)
+            xavier_normal_(self.output_proj.weight, gain=0.5)
             if self.output_proj.bias is not None:
                 constant_(self.output_proj.bias, 0.0)
 
@@ -233,12 +234,15 @@ class xxx_clip(nn.Module):
 
         if not self.is_teacher:
             self.spatial_temporal_module = SpatioTemporalAggregator(feature_dim=self.output_dim,
-                                                                    num_attention_blocks=1,
+                                                                    num_attention_blocks=12,
                                                                     device=self.device,
                                                                     hidden_dim=self.output_dim,
                                                                     num_heads=4,
                                                                     dropout=0.1
                                                                     )
+            '''
+            for student model, fine-tune the last 1/2 layers of text & image encoder
+            '''
             for k,v in self.text_encoder.named_parameters():
                 if '11' in k:
                     v.requires_grad = True
@@ -249,7 +253,6 @@ class xxx_clip(nn.Module):
                     v.requires_grad = True
                 else:
                     v.requires_grad = False
-
 
     @property
     def dtype(self):
@@ -274,10 +277,10 @@ class xxx_clip(nn.Module):
         Returns:
             clip logits
         '''
-        image_features = self.image_encoder(img) # shape[bz, n_f, feat_dim]
+        image_features = self.encode_image(img) # shape[bz, n_f, feat_dim]
 
         if self.is_teacher:
-            text_features, logits = self.text_encoder(image_features)
+            text_features, logits = self.text_encoder(image_features.to(torch.float32))
             return image_features, text_features, logits
 
         image_features = self.spatial_temporal_module(image_features)
@@ -295,6 +298,7 @@ class TextEncoder(nn.Module):
         self.tokens = self._tokenize(self.class_names) # list, len=num class_names    tokens[0]: tensor(1,77)
         self._tokens = torch.stack(self.tokens).squeeze(1).to(device)
         self.short_cut = self._forward(self._tokens) # tensor, shape=[num_classes, 512]
+        self.logit_scale = nn.Parameter(torch.ones([]) * np.log(1 / 0.07))
 
 
     def _tokenize(self, class_names):
@@ -307,10 +311,9 @@ class TextEncoder(nn.Module):
         text_features = self._forward(self._tokens)
         text_features = text_features / text_features.norm(dim=-1, keepdim=True)
 
-        # logits = (100.0 * image_features @ text_features.t()).softmax(dim=-1)
-        logits = image_features @ text_features.t()
-        logits = 100. * logits
-        logits = logits.softmax(dim=-1)
+        logit_scale = self.logit_scale.exp()
+
+        logits = logit_scale * image_features @ text_features.t()
 
         return text_features, logits
 
@@ -354,7 +357,7 @@ class ImageEncoder(nn.Module):
             video_encode: tensor shape [bz, num_frames, output_dim]
         '''
         video_encode = self.clip_model.encode_image(x)
-        # video_encode = video_encode / video_encode.norm(dim=-1, keepdim=True)
+        video_encode = video_encode / video_encode.norm(dim=-1, keepdim=True)
         video_encode = video_encode.reshape(-1, self.num_frames, self.output_dim) # shape = [bz, num_frames, output_dim]
         return video_encode
 

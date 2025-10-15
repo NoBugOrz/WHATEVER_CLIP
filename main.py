@@ -7,7 +7,7 @@ import os
 import torch
 from models.xxx_clip import xxx_clip,get_clip
 from train_net import train
-# from utils.raw_clip_test import test_raw_clip
+from utils.raw_clip_test import raw_clip_train
 from test_net import test
 
 def parse_option():
@@ -42,7 +42,7 @@ def main(cfg, logger):
 
     logger.info('loading dataloaders...')
     train_data, test_data, val_data, train_loader , test_loader, val_loader = build_dataloader(cfg, logger, is_tip=False)
-    # test_raw_clip(cfg, logger, train_loader, raw_clip, student_model)
+    # raw_clip_train(cfg, logger, train_loader, test_loader, val_loader, student_model, teacher_model=raw_clip)
     train(cfg, logger, train_loader, test_loader, val_loader, student_model, teacher_model=raw_clip)
     test(cfg, logger, test_loader, student_model)
 

@@ -229,6 +229,6 @@ def extract_from_batch_data(batch_data,device):
     images = torch.stack(images)
     images = torch.transpose(images, 0, 1).to(device)  # [bz, num_frames, 1, c, h, w]
     images = images.squeeze(2).reshape(-1, 3, 224, 224)
-    label_id = torch.tensor(batch_data['label'],device=device) # list[] len=bz
+    label_id = batch_data['label'].to(device) # list[] len=bz
     # label_id = torch.tensor(label_id).to(device)
     return images, label_id
