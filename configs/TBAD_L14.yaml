@@ -7,14 +7,14 @@ DATA:
     TEST_FILE: 'dataset/TBAD/test_files/'
     VAL_FILE: 'dataset/TBAD/val_files/'
     DATASET: TBAD-8
-    NUM_FRAMES: 8
+    NUM_FRAMES: 16
     NUM_CLASSES: 8
     CLASS_NAMES: 'dataset/TBAD/class_names.json'
-    SHOTS: 8
+    SHOTS: 0
 MODEL:
     ARCH: ViT-L/14
     YOLO: 'Yolo-model/yolov8n.pt'
-    IF_TEACHER: 1
+    IF_TEACHER: 0
     ZS: 0
     LABEL_SMOOTH: 1
     TEMPORAL_POOLING: 'attention'
@@ -31,7 +31,7 @@ TEXT_PROMPT:
     N_CTX_POST: 3
     CTX_POST_INIT: "x x x"
 TIP_ADAPTER:
-    USE_TIP_ADAPTER: 1
+    USE_TIP_ADAPTER: 0
     INIT_ALPHA: 1
     INIT_BETA: 1
   # if loading cached kv
