@@ -12,32 +12,27 @@ def test(cfg, logger, test_loader, student_model):
     Testing the student model on the given dataset.
     '''
     logger.info('testing model on data from path:{}'.format(cfg.DATA.TEST_FILE))
-
     student_model.eval()
-
     batch_size = cfg.TRAIN.BATCH_SIZE
     num_frames = cfg.DATA.NUM_FRAMES
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-
     logit_dic = {'model_logits':[]}
     label_list = []
     for idx, batch_data in enumerate(tqdm(test_loader)):
-        images, labels = extract_from_batch_data(batch_data,device) # images: tensor shape=[*, c, h, w],labels tensor shape=[bz]
-        save_image(images, 'images/')
+        images, labels = extract_from_batch_data(batch_data,device) # images: tensor shape=[*, c, h, w],labels: tensor shape=[bz]
+        # save_image(images, 'images/')
         image_features, text_features, logits = student_model(images)
 
         label_list.append(labels)
         logit_dic['model_logits'].append(logits)
-
 
     labels = torch.cat(label_list)
     logit_dic['model_logits'] = torch.cat(logit_dic['model_logits'])
 
     acc1, acc3, acc5, auc, f1 = validate(logit_dic['model_logits'], labels, plot=False, acc_only = False)
     logger.info('test finished')
-    print('acc1:', acc1,
-          'acc3:', acc3,
-          'acc5:', acc5,
-          'auc:', auc,
-          'f1:', f1)
+    logger.info(f"\nacc1: {acc1}\n"
+                f"acc3: {acc3}\n"
+                f"acc5: {acc5}\n"
+                f"auc: {auc}\n"
+                f"f1: {f1}\n")

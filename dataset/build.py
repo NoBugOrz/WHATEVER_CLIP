@@ -157,7 +157,7 @@ def build_dataloader(config, logger, is_tip=False):
         return tip_data, tip_loader
     '''zero-shot'''
     if config.DATA.SHOTS == 0:
-        test_ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(1))  # 1-12,暂时用1
+        test_ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(4))  # 1-12,暂时用1
         test_data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=test_ann_file, type='test')
         sampler_test = SubsetRandomSampler(np.arange(len(test_data)))
         test_loader = DataLoader(test_data, batch_size=config.TRAIN.BATCH_SIZE, sampler=sampler_test,

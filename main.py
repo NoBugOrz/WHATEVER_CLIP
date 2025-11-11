@@ -44,7 +44,7 @@ def main(cfg, logger):
         test(cfg, logger, test_loader, student_model)
     else:
         '''zero-shot'''
-        print('zero-shot')
+        print('*'*10 ,'zero-shot', '*'*10)
         test_data, test_loader = build_dataloader(cfg, logger,is_tip=False)
         test(cfg, logger, test_loader, raw_clip)
 

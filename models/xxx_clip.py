@@ -222,9 +222,8 @@ class xxx_clip(nn.Module):
         self.output_dim = self.clip.visual.output_dim
         self.init_model()
 
-
     def init_model(self):
-        self.text_encoder = TextEncoder(self.config, self.class_names, self.clip, self.device)
+        self.text_encoder = TextEncoder(self.config, self.class_names, self.clip, self.device, self.is_teacher)
         self.image_encoder = ImageEncoder(self.config, self.clip, self.device, self.is_teacher)
         if self.is_teacher:
             for k,v in self.text_encoder.named_parameters():
@@ -240,9 +239,6 @@ class xxx_clip(nn.Module):
                                                                     num_heads=4,
                                                                     dropout=0.1
                                                                     )
-            '''
-            for student model, fine-tune the last layers of text & image encoder
-            '''
             for k,v in self.text_encoder.named_parameters():
                 if '11' in k:
                     v.requires_grad = True
@@ -277,19 +273,16 @@ class xxx_clip(nn.Module):
         Returns:
             clip logits
         '''
-        image_features = self.encode_image(img) # shape[bz, n_f, feat_dim]
-
+        image_features = self.encode_image(img)
         if self.is_teacher:
             text_features, logits = self.text_encoder(image_features.to(torch.float32))
             return image_features, text_features, logits
-
         image_features = self.spatial_temporal_module(image_features)
         text_features, logits = self.text_encoder(image_features)
         return image_features, text_features, logits
 
-
 class TextEncoder(nn.Module):
-    def __init__(self, config, class_names, clip_model, device):
+    def __init__(self, config, class_names, clip_model, device, is_teacher):
         super().__init__()
         self.device = device
         self.clip_model = clip_model
@@ -299,6 +292,7 @@ class TextEncoder(nn.Module):
         self._tokens = torch.stack(self.tokens).squeeze(1).to(device)
         self.short_cut = self._forward(self._tokens) # tensor, shape=[num_classes, 512]
         self.logit_scale = nn.Parameter(torch.ones([]) * np.log(1 / 0.07))
+        self.is_teacher = is_teacher
 
 
     def _tokenize(self, class_names):
@@ -310,11 +304,10 @@ class TextEncoder(nn.Module):
         '''image_features already normalized'''
         text_features = self._forward(self._tokens)
         text_features = text_features / text_features.norm(dim=-1, keepdim=True)
-
         logit_scale = self.logit_scale.exp()
-
+        # if self.is_teacher:
+        #     logit_scale = 100.
         logits = logit_scale * image_features @ text_features.t()
-
         return text_features, logits
 
     def _forward(self, text):
