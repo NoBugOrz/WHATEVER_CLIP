@@ -148,7 +148,6 @@ def build_dataloader(config, logger, is_tip=False):
     '''tip adapter'''
     if is_tip:
         tip_ann_file = os.path.join(config.TIP_ADAPTER.DATA_FILE, 'tip_{}shot.txt'.format(config.DATA.SHOTS))
-
         tip_data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=tip_ann_file,
                                   shot=config.DATA.SHOTS, type='train')
         sampler_tip = SubsetRandomSampler(np.arange(len(tip_data)))
@@ -157,8 +156,9 @@ def build_dataloader(config, logger, is_tip=False):
         return tip_data, tip_loader
     '''zero-shot'''
     if config.DATA.SHOTS == 0:
-        # test_ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(3))  # 1-12,暂时用1
-        test_ann_file = 'dataset/TBAD/test_files/all_names.txt'
+        test_ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(1))  # 1-12,暂时用1
+        # test_ann_file = 'dataset/TBAD/test_files/all_names.txt'
+        logger.info(f"testing on {test_ann_file}")
         test_data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=test_ann_file, type='test')
         sampler_test = SubsetRandomSampler(np.arange(len(test_data)))
         test_loader = DataLoader(test_data, batch_size=config.TRAIN.BATCH_SIZE, sampler=sampler_test,
@@ -168,6 +168,9 @@ def build_dataloader(config, logger, is_tip=False):
     train_ann_file = os.path.join(config.DATA.TRAIN_FILE, "train_{}shot.txt".format(config.DATA.SHOTS))
     test_ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(1)) # 1-12,暂时用1
     val_ann_file = os.path.join(config.DATA.VAL_FILE, "val_set.txt")
+    logger.info(f"training on {train_ann_file}")
+    logger.info(f"testing on {test_ann_file}")
+    logger.info(f"evaluating on {val_ann_file}")
 
     test_data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=test_ann_file,type='test')
     sampler_test = SubsetRandomSampler(np.arange(len(test_data)))

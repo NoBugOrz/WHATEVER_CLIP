@@ -7,6 +7,7 @@ from utils.show_image import save_image,show_image
 from utils.validate import validate
 from utils.tools import extract_from_batch_data
 
+@torch.no_grad()
 def test(cfg, logger, test_loader, student_model):
     '''
     Testing the student model on the given dataset.

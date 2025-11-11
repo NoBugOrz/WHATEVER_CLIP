@@ -296,7 +296,8 @@ class TextEncoder(nn.Module):
 
 
     def _tokenize(self, class_names):
-        prompted_class_names = [ "In this picture, a person is" + name for name in class_names]
+        # prompted_class_names = [ "In this picture, a person is" + name for name in class_names]
+        prompted_class_names = [name for name in class_names]
         tokens = [tokenize(name) for name in prompted_class_names]
         return tokens
 
@@ -305,8 +306,8 @@ class TextEncoder(nn.Module):
         text_features = self._forward(self._tokens)
         text_features = text_features / text_features.norm(dim=-1, keepdim=True)
         logit_scale = self.logit_scale.exp()
-        # if self.is_teacher:
-        #     logit_scale = 100.
+        if self.is_teacher:
+            logit_scale = 100.
         logits = logit_scale * image_features @ text_features.t()
         return text_features, logits
 
