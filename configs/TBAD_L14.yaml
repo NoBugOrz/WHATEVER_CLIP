@@ -7,23 +7,23 @@ DATA:
     TEST_FILE: 'dataset/TBAD/test_files/'
     VAL_FILE: 'dataset/TBAD/val_files/'
     DATASET: TBAD-8
-    NUM_FRAMES: 16
+    NUM_FRAMES: 8
     NUM_CLASSES: 8
     CLASS_NAMES: 'dataset/TBAD/class_names.json'
-    SHOTS: 0
+    SHOTS: 8
 MODEL:
-    ARCH: ViT-B/16
+    ARCH: ViT-L/14
     YOLO: 'Yolo-model/yolov8n.pt'
-    IF_TEACHER: 0
+    IF_TEACHER: 1
     ZS: 0
-    LABEL_SMOOTH: 0
+    LABEL_SMOOTH: 1
     TEMPORAL_POOLING: 'attention'
     LP: 1
     USE_DISTILLATION: 1
 TRAIN:
-    BATCH_SIZE: 4 # BS 64
+    BATCH_SIZE: 8 # BS 64
     ACCUMULATION_STEPS: 2
-    EPOCHS: 20
+    EPOCHS: 100
     LR: 0.001
 TEXT_PROMPT:
     N_CTX_PRE: 8
@@ -35,10 +35,10 @@ TIP_ADAPTER:
     INIT_ALPHA: 1
     INIT_BETA: 1
   # if loading cached kv
-    LOAD_CACHE: 1
+    LOAD_CACHE: 0
     DATA_FILE: 'dataset/TBAD/train_files/'
     AUG_EPOCH: 1
-    TRAIN_EPOCH: 20
+    TRAIN_EPOCH: 1
 
     SEARCH_HP: True
     SEARCH_SCALE: [12, 5]

@@ -17,7 +17,7 @@ class AttentionBlock(nn.Module):
     single attention block with
     {
     self_attention,
-    bottle_neck feed forward,(1 -> 2 -> 1)
+    bottle_neck feed forward,(1 -> 4 -> 1)
     residual connection
     }
     """
@@ -31,10 +31,10 @@ class AttentionBlock(nn.Module):
             batch_first=True
         ).to(device)
         self.feed_forward = nn.Sequential(
-            nn.Linear(hidden_dim, hidden_dim * 2),
+            nn.Linear(hidden_dim, hidden_dim * 4),
             QuickGELU(),
             nn.Dropout(dropout),
-            nn.Linear(hidden_dim * 2, hidden_dim)
+            nn.Linear(hidden_dim * 4, hidden_dim)
         ).to(device)
         self.norm1 = nn.LayerNorm(hidden_dim).to(device)  # 注意力后归一化
         self.norm2 = nn.LayerNorm(hidden_dim).to(device)  # 前馈网络后归一化
@@ -55,7 +55,7 @@ class AttentionBlock(nn.Module):
         # 前馈网络初始化
         for m in self.feed_forward:
             if isinstance(m, nn.Linear):
-                xavier_normal_(m.weight, gain=1.0)
+                xavier_normal_(m.weight, gain=0.5)
                 if m.bias is not None:
                     constant_(m.bias, 0.0)
 
@@ -234,14 +234,14 @@ class xxx_clip(nn.Module):
 
         if not self.is_teacher:
             self.spatial_temporal_module = SpatioTemporalAggregator(feature_dim=self.output_dim,
-                                                                    num_attention_blocks=12,
+                                                                    num_attention_blocks=2,
                                                                     device=self.device,
                                                                     hidden_dim=self.output_dim,
                                                                     num_heads=4,
                                                                     dropout=0.1
                                                                     )
             '''
-            for student model, fine-tune the last 1/2 layers of text & image encoder
+            for student model, fine-tune the last layers of text & image encoder
             '''
             for k,v in self.text_encoder.named_parameters():
                 if '11' in k:

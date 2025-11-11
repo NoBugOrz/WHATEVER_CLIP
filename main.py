@@ -6,7 +6,7 @@ import argparse
 import os
 import torch
 from models.xxx_clip import xxx_clip,get_clip
-from train_net import train
+from train_net import train, pre_load_features
 from utils.raw_clip_test import raw_clip_train
 from test_net import test
 
