@@ -32,22 +32,23 @@ def main(cfg, logger):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     if cfg.MODEL.USE_DISTILLATION:
-        logger.info('loading raw_clip...')
         raw_clip = xxx_clip(cfg,device,is_teacher=True)
     else:
         raw_clip = None
-
-    logger.info('building xxx_model...')
     student_model = xxx_clip(cfg,device,is_teacher=False)
 
-    logger.info('loading dataloaders...')
-    train_data, test_data, val_data, train_loader , test_loader, val_loader = build_dataloader(cfg, logger, is_tip=False)
-    # raw_clip_train(cfg, logger, train_loader, test_loader, val_loader, student_model, teacher_model=raw_clip)
-    train(cfg, logger, train_loader, test_loader, val_loader, student_model, teacher_model=raw_clip)
-    test(cfg, logger, test_loader, student_model)
+
+    if cfg.DATA.SHOTS != 0:
+        train_data, test_data, val_data, train_loader, test_loader, val_loader = build_dataloader(cfg, logger,is_tip=False)
+        train(cfg, logger, train_loader, test_loader, val_loader, student_model, teacher_model=raw_clip)
+        test(cfg, logger, test_loader, student_model)
+    else:
+        '''zero-shot'''
+        print('zero-shot')
+        test_data, test_loader = build_dataloader(cfg, logger,is_tip=False)
+        test(cfg, logger, test_loader, raw_clip)
 
 if __name__ == '__main__':
-    torch.cuda.empty_cache()
     args, cfg = parse_option()
     logger = create_logger('logs')
     logger.info("Running with config:")

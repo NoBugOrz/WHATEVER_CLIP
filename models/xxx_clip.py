@@ -78,7 +78,7 @@ class AttentionBlock(nn.Module):
         return x
 
 class SpatioTemporalAggregator(nn.Module):
-    def __init__(self, feature_dim, num_attention_blocks, device='cuda', hidden_dim=None, num_heads=4, dropout=0.1):
+    def __init__(self, feature_dim, num_attention_blocks, device='cuda', hidden_dim=None, num_heads=8, dropout=0.1):
         """
             feature_dim: 输入输出特征维度
             hidden_dim: 隐藏层维度，默认与feature_dim相同
@@ -128,7 +128,7 @@ class SpatioTemporalAggregator(nn.Module):
                 hidden_dim=self.hidden_dim,
                 num_heads=self.num_heads,
                 device=self.device,
-                dropout=0.1
+                dropout=dropout
             ) for _ in range(self.num_attention_blocks)]
         )
 

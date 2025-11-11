@@ -66,6 +66,6 @@ def traverse_files(root_dir):
 #
 # file_names = traverse_files(root)
 #
-# write_file_labels(file_names, cls_names, '/root/autodl-tmp/WHATEVER_CLIP/dataset/TBAD/test_files/all_names')
+# write_file_labels(file_names, cls_names, '/root/autodl-tmp/WHATEVER_CLIP/dataset/TBAD/test_files/all_names.txt')
 
 

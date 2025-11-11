@@ -148,46 +148,46 @@ def build_dataloader(config, logger, is_tip=False):
     '''tip adapter'''
     if is_tip:
         ann_file = os.path.join(config.TIP_ADAPTER.DATA_FILE, 'tip_{}shot.txt'.format(config.DATA.SHOTS))
-
-        tip_data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=ann_file,
-                                  shot=config.DATA.SHOTS, type='train')
+        tip_data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=ann_file,shot=config.DATA.SHOTS, type='train')
         sampler_test = SubsetRandomSampler(np.arange(len(tip_data)))
-        tip_loader = DataLoader(tip_data, batch_size=1, sampler=sampler_test,
-                                  num_workers=12, pin_memory=True, drop_last=True)
-
+        tip_loader = DataLoader(tip_data, batch_size=1, sampler=sampler_test,num_workers=12, pin_memory=True, drop_last=True)
         return tip_data, tip_loader
 
-    train_ann_file = os.path.join(config.DATA.TRAIN_FILE, "train_{}shot.txt".format(config.DATA.SHOTS))
-    '''debug'''
-    # test_ann_file = os.path.join(config.DATA.TRAIN_FILE, "train_{}shot.txt".format(1))
-    # val_ann_file = os.path.join(config.DATA.TRAIN_FILE, "train_{}shot.txt".format(1))
-    test_ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(1)) # 1-12,暂时用1
-    val_ann_file = os.path.join(config.DATA.VAL_FILE, "val_8shot.txt")
+    '''zero-shot'''
+    if config.DATA.SHOTS == 0:
+        test_ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(2))
+        # test_ann_file = "dataset/TBAD/test_files/all_names.txt"
+        test_data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=test_ann_file, type='test')
+        sampler_test = SubsetRandomSampler(np.arange(len(test_data)))
+        test_loader = DataLoader(test_data, batch_size=config.TRAIN.BATCH_SIZE, sampler=sampler_test,
+                                 num_workers=12, pin_memory=True, drop_last=True)
+        return test_data, test_loader
 
-    # test_ann_file = train_ann_file # debug，暂时用train
+
+    train_ann_file = os.path.join(config.DATA.TRAIN_FILE, "train_{}shot.txt".format(config.DATA.SHOTS))
+    test_ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(1)) # 1-12,暂时用1
+    val_ann_file = os.path.join(config.DATA.VAL_FILE, "val_set.txt")
+
 
     test_data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=test_ann_file,type='test')
     sampler_test = SubsetRandomSampler(np.arange(len(test_data)))
     test_loader = DataLoader(test_data, batch_size=config.TRAIN.BATCH_SIZE, sampler=sampler_test,
                                  num_workers=12, pin_memory=True, drop_last=True)
-
-    logger.info("test_data_finished!")
+    print("test_data_finished!")
 
     train_data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=train_ann_file,
                                      shot=config.DATA.SHOTS, type='train')
-    sampler_test = SubsetRandomSampler(np.arange(len(train_data)))
-    train_loader = DataLoader(train_data, batch_size=config.TRAIN.BATCH_SIZE, sampler=sampler_test,
+    sampler_train = SubsetRandomSampler(np.arange(len(train_data)))
+    train_loader = DataLoader(train_data, batch_size=config.TRAIN.BATCH_SIZE, sampler=sampler_train,
                              num_workers=12, pin_memory=True, drop_last=True)
-
-    logger.info("train_data_finished!")
+    print("train_data_finished!")
 
     val_data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=val_ann_file,
                               shot=config.DATA.SHOTS, type='val')
-    sampler_test = SubsetRandomSampler(np.arange(len(val_data)))
-    val_loader = DataLoader(val_data, batch_size=8, sampler=sampler_test,
+    sampler_val = SubsetRandomSampler(np.arange(len(val_data)))
+    val_loader = DataLoader(val_data, batch_size=8, sampler=sampler_val,
                               num_workers=12, pin_memory=True, drop_last=True)
-
-    logger.info("val_data_finished!")
+    print("val_data_finished!")
 
     return  train_data, test_data, val_data, train_loader , test_loader, val_loader
 
@@ -206,7 +206,7 @@ def build_cache_dataloader(config, ann_file):
     torch.save({
         "dataset_data": data,  # 保存数据集原始数据
         "dataloader_params": {k: v for k, v in dataloader_params.items() if k != "dataset"}  # 排除dataset
-    }, "dataloader_config.pth")
+    }, "cache/test_data.pth")
 
 
     return None

@@ -1,6 +1,6 @@
 import PIL.Image as Image
 import numpy as np
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
 
 
 def save_image(img, path='images/', normalize=True):
