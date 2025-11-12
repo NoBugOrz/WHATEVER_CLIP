@@ -17,6 +17,7 @@ _C.DATA.ROOT = ''
 _C.DATA.TRAIN_FILE = ''
 _C.DATA.TEST_FILE = ''
 _C.DATA.VAL_FILE = ''
+_C.DATA.TIP_FILE = ''
 _C.DATA.DATASET = 'hmdb51'
 _C.DATA.NUM_FRAMES = 30
 _C.DATA.INPUT_SIZE = 224
@@ -42,7 +43,7 @@ _C.MODEL.TEMPORAL_POOLING = 'attention'
 _C.MODEL.LP = 0
 # if using distillation in training
 _C.MODEL.USE_DISTILLATION = 1
-# if using prompt in training/testing (tag -> "a teacher is {tag}")
+# if using prompt in training/testing (tag -> "a teacher {tag}")
 _C.MODEL.PROMPT = 1
 # -----------------------------------------------------------------------------
 # Training settings
@@ -77,7 +78,6 @@ _C.TIP_ADAPTER.INIT_ALPHA = 1
 _C.TIP_ADAPTER.INIT_BETA = 1
 # if loading cached kv
 _C.TIP_ADAPTER.LOAD_CACHE = 0
-_C.TIP_ADAPTER.DATA_FILE = ''
 _C.TIP_ADAPTER.AUG_EPOCH = 1
 _C.TIP_ADAPTER.TRAIN_EPOCH = 2
 _C.TIP_ADAPTER.SEARCH_HP = True

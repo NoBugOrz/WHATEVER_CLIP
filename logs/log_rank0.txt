@@ -6483,3 +6483,350 @@ TRAIN:
   WARMUP_EPOCHS: 5
   WEIGHT_DECAY: 0.001
 [2025-11-12 14:24:53 root] (build.py 161): INFO testing on dataset/TBAD/test_files/test_reordered_part3.txt
+[2025-11-12 14:25:31 root] (test_net.py 16): INFO testing model on data from path:dataset/TBAD/test_files/
+[2025-11-12 14:25:34 root] (test_net.py 47): INFO test finished
+[2025-11-12 14:25:34 root] (test_net.py 48): INFO 
+acc1: 30.357142857142858
+acc3: 57.142857142857146
+acc5: 78.57142857142857
+auc: 0.7481778425655978
+f1: 0.22630347593582884
+
+[2025-11-12 14:26:00 root] (main.py 54): INFO Running with config:
+[2025-11-12 14:26:00 root] (main.py 55): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 16
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 0
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 0
+  LABEL_SMOOTH: 1
+  LP: 1
+  PROMPT: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  SEARCH_HP: True
+  SEARCH_SCALE: [12, 5]
+  SEARCH_STEP: [200, 20]
+  TRAIN_EPOCH: 1
+  USE_TIP_ADAPTER: 0
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 8
+  EPOCHS: 100
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-11-12 14:26:08 root] (build.py 161): INFO testing on dataset/TBAD/test_files/test_reordered_part3.txt
+[2025-11-12 14:26:47 root] (test_net.py 16): INFO testing model on data from path:dataset/TBAD/test_files/
+[2025-11-12 14:26:50 root] (test_net.py 47): INFO test finished
+[2025-11-12 14:26:50 root] (test_net.py 48): INFO 
+acc1: 39.285714285714285
+acc3: 71.42857142857143
+acc5: 85.71428571428571
+auc: 0.7870024497894397
+f1: 0.38222904546433956
+
+[2025-11-12 14:45:10 root] (main.py 54): INFO Running with config:
+[2025-11-12 14:45:10 root] (main.py 55): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 16
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 0
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 0
+  LABEL_SMOOTH: 1
+  LP: 1
+  PROMPT: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 1
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  SEARCH_HP: True
+  SEARCH_SCALE: [12, 5]
+  SEARCH_STEP: [200, 20]
+  TRAIN_EPOCH: 1
+  USE_TIP_ADAPTER: 0
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 8
+  EPOCHS: 100
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-11-12 14:45:19 root] (build.py 161): INFO testing on dataset/TBAD/test_files/all_names.txt
+[2025-11-12 14:53:51 root] (test_net.py 16): INFO testing model on data from path:dataset/TBAD/test_files/
+[2025-11-12 14:54:11 root] (test_net.py 47): INFO test finished
+[2025-11-12 14:54:11 root] (test_net.py 48): INFO 
+acc1: 33.455882352941174
+acc3: 64.33823529411765
+acc5: 82.9656862745098
+auc: 0.7678930978989831
+f1: 0.29820060310846996
+
+[2025-11-12 14:57:26 root] (main.py 57): INFO Running with config:
+[2025-11-12 14:57:26 root] (main.py 58): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 16
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 8
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 0
+  LABEL_SMOOTH: 1
+  LP: 1
+  PROMPT: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 10
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  SEARCH_HP: True
+  SEARCH_SCALE: [12, 5]
+  SEARCH_STEP: [200, 20]
+  TRAIN_EPOCH: 1
+  USE_TIP_ADAPTER: 0
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 1
+  EPOCHS: 100
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-11-12 14:59:25 root] (main.py 58): INFO Running with config:
+[2025-11-12 14:59:25 root] (main.py 59): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 16
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 8
+  TEST_FILE: dataset/TBAD/test_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 0
+  LABEL_SMOOTH: 1
+  LP: 1
+  PROMPT: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 10
+  DATA_FILE: dataset/TBAD/train_files/
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 0
+  SEARCH_HP: True
+  SEARCH_SCALE: [12, 5]
+  SEARCH_STEP: [200, 20]
+  TRAIN_EPOCH: 1
+  USE_TIP_ADAPTER: 0
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 1
+  EPOCHS: 100
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-11-12 15:50:30 root] (main.py 56): INFO Running with config:
+[2025-11-12 15:50:30 root] (main.py 57): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 16
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 0
+  TEST_FILE: dataset/TBAD/test_files/
+  TIP_FILE: dataset/TBAD/tip_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 0
+  LABEL_SMOOTH: 1
+  LP: 1
+  PROMPT: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 10
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 1
+  SEARCH_HP: True
+  SEARCH_SCALE: [12, 5]
+  SEARCH_STEP: [200, 20]
+  TRAIN_EPOCH: 1
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 1
+  EPOCHS: 100
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+[2025-11-12 15:52:14 root] (main.py 56): INFO Running with config:
+[2025-11-12 15:52:14 root] (main.py 57): INFO BASE: ['/root/autodl-tmp/WHATEVER_CLIP']
+CACHE_DIR: cache
+DATA:
+  CLASS_NAMES: dataset/TBAD/class_names.json
+  DATASET: TBAD-8
+  INPUT_SIZE: 224
+  NUM_CLASSES: 8
+  NUM_FRAMES: 16
+  ROOT: /root/autodl-tmp/TBAD_Dataset/
+  SHOTS: 0
+  TEST_FILE: dataset/TBAD/test_files/
+  TIP_FILE: dataset/TBAD/tip_files/
+  TRAIN_FILE: dataset/TBAD/train_files/
+  VAL_FILE: dataset/TBAD/val_files/
+MODEL:
+  ARCH: ViT-B/16
+  IF_TEACHER: 0
+  LABEL_SMOOTH: 1
+  LP: 1
+  PROMPT: 1
+  TEMPORAL_POOLING: attention
+  USE_DISTILLATION: 1
+  YOLO: Yolo-model/yolov8n.pt
+  ZS: 0
+OUTPUT: output_test_tip.csv
+TEXT_PROMPT:
+  CTX_POST_INIT: x x x
+  CTX_PRE_INIT: x x x x x x x x
+  N_CTX_POST: 3
+  N_CTX_PRE: 8
+TIP_ADAPTER:
+  AUG_EPOCH: 10
+  INIT_ALPHA: 1
+  INIT_BETA: 1
+  LOAD_CACHE: 1
+  SEARCH_HP: True
+  SEARCH_SCALE: [12, 5]
+  SEARCH_STEP: [200, 20]
+  TRAIN_EPOCH: 1
+  USE_TIP_ADAPTER: 1
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: 0
+  BATCH_SIZE: 1
+  EPOCHS: 100
+  LR: 0.001
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: 0
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001

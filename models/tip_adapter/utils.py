@@ -53,8 +53,8 @@ def build_cache_model(cfg, clip_model, train_loader_cache):
         cache_keys = cache_keys.permute(1, 0)
         cache_values = F.one_hot(torch.cat(cache_values, dim=0)).half()
 
-        torch.save(cache_keys, cfg.CACHE_DIR + '/keys_' + str(cfg.DATA.SHOTS) + "shots.pt")
-        torch.save(cache_values, cfg.CACHE_DIR + '/values_' + str(cfg.DATA.SHOTS) + "shots.pt")
+        torch.save(cache_keys, cfg.CACHE_DIR + '/keys_' + str(cfg.DATA.SHOTS) + "shots.pt") # [num_samples, feat_dim]
+        torch.save(cache_values, cfg.CACHE_DIR + '/values_' + str(cfg.DATA.SHOTS) + "shots.pt") # [num_samples, num_cls]
 
     else:
         cache_keys = torch.load(cfg.CACHE_DIR + '/keys_' + str(cfg.DATA.SHOTS) + "shots.pt")

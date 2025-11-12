@@ -14,24 +14,8 @@ import torch.nn.functional as F
 from models.tip_adapter.utils import cls_acc,search_hp
 from models.xxx_clip import get_clip
 from utils.scheduler import WarmupScheduler
-
+from utils.tools import pre_load_features
 # torch.autograd.set_detect_anomaly(True)
-
-def pre_load_features(model, loader):
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    features, labels, logits = [], [], []
-    for i, batch_data in enumerate(tqdm(loader)):
-        images, target = extract_from_batch_data(batch_data, device)  # images: tensor shape=[*, c, h, w],target tensor shape=[bz]
-        images, target = images.cuda(), target.cuda()
-
-        with torch.no_grad():
-            image_features, text_features, clip_logits = model(images)
-
-        features.append(image_features)
-        labels.append(target)
-        logits.append(clip_logits)
-
-    return torch.cat(features), torch.cat(labels), torch.cat(logits)
 
 def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader,
                       val_features, val_labels, test_features, test_labels, clip_weights, test_logits):

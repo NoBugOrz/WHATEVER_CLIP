@@ -37,16 +37,18 @@ def main(cfg, logger):
         raw_clip = None
     student_model = xxx_clip(cfg,device,is_teacher=False)
 
-
     if cfg.DATA.SHOTS != 0:
-        train_data, test_data, val_data, train_loader, test_loader, val_loader = build_dataloader(cfg, logger,is_tip=False)
+        # train_data, test_data, val_data, train_loader, test_loader, val_loader = build_dataloader(cfg, logger,is_tip=False)
+        train_data, train_loader = build_dataloader(cfg, logger, loader_type='train')
+        val_data, val_loader = build_dataloader(cfg, logger, loader_type='val')
+        test_data, test_loader = build_dataloader(cfg, logger, loader_type='test')
         train(cfg, logger, train_loader, test_loader, val_loader, student_model, teacher_model=raw_clip)
         test(cfg, logger, test_loader, student_model)
     else:
         '''zero-shot'''
         print('*'*10 ,'zero-shot', '*'*10)
-        test_data, test_loader = build_dataloader(cfg, logger,is_tip=False)
-        test(cfg, logger, test_loader, raw_clip)
+        test_data, test_loader = build_dataloader(cfg, logger,loader_type='test')
+        test(cfg, logger, test_loader, test_loader, raw_clip)
 
 if __name__ == '__main__':
     args, cfg = parse_option()

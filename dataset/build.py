@@ -141,12 +141,31 @@ class SubsetRandomSampler(torch.utils.data.Sampler):
     def set_epoch(self, epoch):
         self.epoch = epoch
 
-def build_dataloader(config, logger, is_tip=False):
+def build_dataloader(config, logger, loader_type:str):
+    '''
+    available loader_type: ['train', 'test', 'val', 'tip']
+    '''
+    assert loader_type in ['train', 'test', 'val', 'tip']
+
     device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
     _, preprocess = clip.load(config.MODEL.ARCH, device=device)
 
+    print('*'*10, f"building {loader_type} dataset", '*'*10)
+    if loader_type == 'test':
+        ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(1)) # 1-12,暂时用1
+    else:
+        ann_file = os.path.join(config.DATA[loader_type.upper() + "_FILE"], '{}_{}shot.txt'.format(loader_type, config.DATA.SHOTS))
+    data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=ann_file,
+                        shot=config.DATA.SHOTS, type='train' if loader_type == 'train' else 'test')
+    sampler = SubsetRandomSampler(np.arange(len(data)))
+    loader = DataLoader(data, batch_size=config.TRAIN.BATCH_SIZE, sampler=sampler,
+                        num_workers=12, pin_memory=True, drop_last=True)
+
+    return data, loader
+
     '''tip adapter'''
     if is_tip:
+        print('*'*10, "building tip adapter dataset", '*'*10)
         tip_ann_file = os.path.join(config.TIP_ADAPTER.DATA_FILE, 'tip_{}shot.txt'.format(config.DATA.SHOTS))
         tip_data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=tip_ann_file,
                                   shot=config.DATA.SHOTS, type='train')
@@ -156,8 +175,8 @@ def build_dataloader(config, logger, is_tip=False):
         return tip_data, tip_loader
     '''zero-shot'''
     if config.DATA.SHOTS == 0:
-        test_ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(3))  # 1-12,暂时用1
-        # test_ann_file = 'dataset/TBAD/test_files/all_names.txt'
+        # test_ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(3))  # 1-12,暂时用1
+        test_ann_file = 'dataset/TBAD/test_files/all_names.txt'
         logger.info(f"testing on {test_ann_file}")
         test_data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=test_ann_file, type='test')
         sampler_test = SubsetRandomSampler(np.arange(len(test_data)))
