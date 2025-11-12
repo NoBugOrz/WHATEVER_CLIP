@@ -42,6 +42,8 @@ _C.MODEL.TEMPORAL_POOLING = 'attention'
 _C.MODEL.LP = 0
 # if using distillation in training
 _C.MODEL.USE_DISTILLATION = 1
+# if using prompt in training/testing (tag -> "a teacher is {tag}")
+_C.MODEL.PROMPT = 1
 # -----------------------------------------------------------------------------
 # Training settings
 # -----------------------------------------------------------------------------

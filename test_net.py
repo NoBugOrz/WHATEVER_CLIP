@@ -2,7 +2,8 @@ import torch
 import torch.optim as optim
 from timm.loss import LabelSmoothingCrossEntropy
 from tqdm import tqdm
-
+from models.tip_adapter.utils import build_cache_model
+from models.xxx_clip import get_clip
 from utils.show_image import save_image,show_image
 from utils.validate import validate
 from utils.tools import extract_from_batch_data
@@ -17,6 +18,18 @@ def test(cfg, logger, test_loader, student_model):
     batch_size = cfg.TRAIN.BATCH_SIZE
     num_frames = cfg.DATA.NUM_FRAMES
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+    use_tip_adapter = cfg.TIP_ADAPTER.USE_TIP_ADAPTER
+    if use_tip_adapter:
+        if cfg.DATA.SHOTS == 0:
+            tip_data, tip_loader = build_dataloader(cfg, logger, is_tip=True)
+            raw_clip_model = get_clip(cfg, is_teacher=True)
+            cache_keys, cache_values = build_cache_model(cfg=cfg, clip_model=raw_clip_model,
+                                                         train_loader_cache=tip_loader)
+        else:
+            pass
+
+
     logit_dic = {'model_logits':[]}
     label_list = []
     for idx, batch_data in enumerate(tqdm(test_loader)):

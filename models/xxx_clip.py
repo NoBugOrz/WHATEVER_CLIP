@@ -287,6 +287,7 @@ class TextEncoder(nn.Module):
         self.device = device
         self.clip_model = clip_model
         self.class_names = class_names # list, len=num class_names
+        self.config = config
         self.dtype = clip_model.dtype
         self.tokens = self._tokenize(self.class_names) # list, len=num class_names    tokens[0]: tensor(1,77)
         self._tokens = torch.stack(self.tokens).squeeze(1).to(device)
@@ -294,10 +295,11 @@ class TextEncoder(nn.Module):
         self.logit_scale = nn.Parameter(torch.ones([]) * np.log(1 / 0.07))
         self.is_teacher = is_teacher
 
-
     def _tokenize(self, class_names):
-        # prompted_class_names = [ "In this picture, a person is" + name for name in class_names]
-        prompted_class_names = [name for name in class_names]
+        if self.config.MODEL.PROMPT:
+            prompted_class_names = ["A teacher " + name  for name in class_names]
+        else:
+            prompted_class_names = [name for name in class_names]
         tokens = [tokenize(name) for name in prompted_class_names]
         return tokens
 
