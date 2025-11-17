@@ -25,6 +25,7 @@ _C.DATA.NUM_CLASSES = 51
 _C.DATA.CLASS_NAMES = 'dataset/TBAD/class_names.json'
 # Few-shot setting, k-shot
 _C.DATA.SHOTS = 2
+_C.DATA.PRELOAD_CACHE_DIR = ''
 # -----------------------------------------------------------------------------
 # Model settings
 # -----------------------------------------------------------------------------

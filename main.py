@@ -9,7 +9,8 @@ from models.xxx_clip import xxx_clip,get_clip
 from train_net import train, pre_load_features
 from utils.raw_clip_test import raw_clip_train
 from test_net import test
-
+from utils.tools import save_features
+from script import raw_clip_test
 def parse_option():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', '-cfg', required=True, type=str, default='configs/TBAD_L14.yaml')     
@@ -48,7 +49,9 @@ def main(cfg, logger):
         '''zero-shot'''
         print('*'*10 ,'zero-shot', '*'*10)
         test_data, test_loader = build_dataloader(cfg, logger,loader_type='test')
-        test(cfg, logger, test_loader, test_loader, raw_clip)
+        raw_clip_test(cfg, logger, test_loader)
+        # save_features(cfg, raw_clip, test_loader)
+        test(cfg, logger, test_loader, raw_clip)
 
 if __name__ == '__main__':
     args, cfg = parse_option()

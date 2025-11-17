@@ -15,7 +15,7 @@ def test(cfg, logger, test_loader, student_model):
     '''
     Testing the student model on the given dataset.
     '''
-    logger.info('testing model on data from path:{}'.format(cfg.DATA.TEST_FILE))
+    # logger.info('testing model on data from path:{}'.format(cfg.DATA.TEST_FILE))
     student_model.eval()
     batch_size = cfg.TRAIN.BATCH_SIZE
     num_frames = cfg.DATA.NUM_FRAMES
@@ -53,7 +53,7 @@ def test(cfg, logger, test_loader, student_model):
                 f"auc: {auc}\n"
                 f"f1: {f1}\n")
 
-
+@torch.no_grad()
 def perform_tip_adapter_test(cache_keys, cache_values, model, test_loader, val_loader):
     '''perform test when using tip adapter.'''
     clip_weights = student_model.text_encoder.short_cut.t()
@@ -64,3 +64,6 @@ def perform_tip_adapter_test(cache_keys, cache_values, model, test_loader, val_l
     clip_logits = 100. * val_features @ clip_weights
     acc = cls_acc(clip_logits, val_labels)
     print("\n**** Zero-shot CLIP's val accuracy: {:.2f}. ****\n".format(acc))
+
+    for i, batch_data in enumerate(tqdm(train_loader)):
+        images, target = extract_from_batch_data(batch_data, device)  # images: tensor shape=[*, c, h, w],target tensor shape=[bz]

@@ -223,7 +223,7 @@ def extract_from_batch_data(batch_data,device):
     '''
     Returns:
         imgs : tensor of shape (bz * num_frames, C, H, W)
-        labels : list of shape (bz * num_frames)
+        labels : list of shape (bz)
     '''
     images = batch_data['data']
     images = torch.stack(images)
@@ -248,3 +248,10 @@ def pre_load_features(model, loader):
         logits.append(clip_logits)
 
     return torch.cat(features), torch.cat(labels), torch.cat(logits)
+
+def save_features(cfg, model, loader):
+    for i, batch_data in enumerate(tqdm(loader)):
+        images, target = extract_from_batch_data(batch_data, device)
+    dic = {'features': features, 'labels': labels, 'logits': logits}
+    torch.save(dic, cfg.DATA.PRELOAD_CACHE_DIR + '/' + 'all_test.pt')
+    return dic

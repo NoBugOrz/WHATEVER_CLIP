@@ -12,6 +12,7 @@ DATA:
     NUM_CLASSES: 8
     CLASS_NAMES: 'dataset/TBAD/class_names.json'
     SHOTS: 0
+    PRELOAD_CACHE_DIR: 'cache/preload_feat'
 MODEL:
     ARCH: ViT-B/16
     YOLO: 'Yolo-model/yolov8n.pt'
@@ -21,9 +22,9 @@ MODEL:
     TEMPORAL_POOLING: 'attention'
     LP: 1
     USE_DISTILLATION: 1
-    PROMPT: 1
+    PROMPT: 0
 TRAIN:
-    BATCH_SIZE: 1 # BS 64
+    BATCH_SIZE: 8 # BS 64
     ACCUMULATION_STEPS: 2
     EPOCHS: 100
     LR: 0.001
@@ -33,7 +34,7 @@ TEXT_PROMPT:
     N_CTX_POST: 3
     CTX_POST_INIT: "x x x"
 TIP_ADAPTER:
-    USE_TIP_ADAPTER: 1
+    USE_TIP_ADAPTER: 0
     INIT_ALPHA: 1
     INIT_BETA: 1
   # if loading cached kv
