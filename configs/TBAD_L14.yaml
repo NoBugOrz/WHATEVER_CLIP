@@ -22,7 +22,7 @@ MODEL:
     TEMPORAL_POOLING: 'attention'
     LP: 1
     USE_DISTILLATION: 1
-    PROMPT: 0
+    PROMPT: 1
 TRAIN:
     BATCH_SIZE: 8 # BS 64
     ACCUMULATION_STEPS: 2
@@ -34,7 +34,7 @@ TEXT_PROMPT:
     N_CTX_POST: 3
     CTX_POST_INIT: "x x x"
 TIP_ADAPTER:
-    USE_TIP_ADAPTER: 0
+    USE_TIP_ADAPTER: 1
     INIT_ALPHA: 1
     INIT_BETA: 1
   # if loading cached kv

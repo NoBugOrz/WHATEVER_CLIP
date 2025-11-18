@@ -292,6 +292,8 @@ class TextEncoder(nn.Module):
         self.tokens = self._tokenize(self.class_names) # list, len=num class_names    tokens[0]: tensor(1,77)
         self._tokens = torch.stack(self.tokens).squeeze(1).to(device)
         self.short_cut = self._forward(self._tokens) # tensor, shape=[num_classes, 512]
+        norm = self.short_cut.norm(dim=-1,keepdim=True)
+        self.short_cut = self.short_cut / norm
         self.logit_scale = nn.Parameter(torch.ones([]) * np.log(1 / 0.07))
         self.is_teacher = is_teacher
 
