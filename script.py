@@ -24,17 +24,18 @@ def load_class_names(json_file):
 
 def raw_clip_test(cfg, logger, loader):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    resolution = 336 if cfg.MODEL.ARCH == "ViT-L/14@336px" else 224
     batch_size = cfg.TRAIN.BATCH_SIZE
     num_frames = cfg.DATA.NUM_FRAMES
-    model, preprocess = clip.load('ViT-B/16', device)
+    model, preprocess = clip.load(cfg.MODEL.ARCH, device)
     class_names = load_class_names(cfg.DATA.CLASS_NAMES)
     tokenized_cls_names = clip.tokenize(class_names).to(device)
     label_list = []
     logit_list = []
     for idx, batch_data in enumerate(tqdm(loader)):
-        images, labels = extract_from_batch_data(batch_data,device) # images: tensor shape=[*, c, h, w],labels: tensor shape=[bz]
+        images, labels = extract_from_batch_data(batch_data,device,cfg) # images: tensor shape=[*, c, h, w],labels: tensor shape=[bz]
         label_list.append(labels)
-        images = images.reshape(-1, 3, cfg.DATA.INPUT_SIZE, cfg.DATA.INPUT_SIZE)
+        images = images.reshape(-1, 3, resolution, resolution)
         with torch.no_grad():
             video_encode = model.encode_image(images)
             video_encode = video_encode / video_encode.norm(dim=-1, keepdim=True)

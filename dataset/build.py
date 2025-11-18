@@ -156,6 +156,9 @@ def build_dataloader(config, logger, loader_type:str):
         ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(3)) # 1-12,暂时用1
     elif loader_type == 'val':
         ann_file = os.path.join(config.DATA[loader_type.upper() + "_FILE"], '{}_{}shot.txt'.format(loader_type, 8)) # val use 8 shots
+    elif loader_type == 'tip':
+        ann_file = os.path.join(config.DATA[loader_type.upper() + "_FILE"],
+                                '{}_{}shot.txt'.format(loader_type, 8))  # tip cached data use 8 shots
     else:
         ann_file = os.path.join(config.DATA[loader_type.upper() + "_FILE"], '{}_{}shot.txt'.format(loader_type, config.DATA.SHOTS))
     logger.info("Building {} dataset on data from path {}".format(loader_type, ann_file))

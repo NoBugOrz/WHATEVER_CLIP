@@ -1,11 +1,14 @@
 from tqdm import tqdm
-
 import torch
 import torch.nn.functional as F
 import torch.nn as nn
-
 import clip
 from utils.tools import extract_from_batch_data
+
+path_dic = {'ViT-B/16':"shots.pt",
+            'ViT-L/14':"shots_L14.pt",
+            'ViT-L/14@336px':"shots_L14@336px.pt"
+            }
 
 def cls_acc(output, target, topk=1):
     pred = output.topk(topk, 1, True, True)[1].t()
@@ -31,7 +34,7 @@ def build_cache_model(cfg, clip_model, train_loader_cache):
 
                 print('Augment Epoch: {:} / {:}'.format(augment_idx, cfg.TIP_ADAPTER.AUG_EPOCH))
                 for i, batch_data  in enumerate(tqdm(train_loader_cache)):
-                    images, target = extract_from_batch_data(batch_data,device)
+                    images, target = extract_from_batch_data(batch_data,device,cfg)
                     images = images.cuda()
                     image_features = clip_model.encode_image(images) # [bz*num_frames, feature_dim]
                     '''
@@ -53,12 +56,13 @@ def build_cache_model(cfg, clip_model, train_loader_cache):
         cache_keys = cache_keys.permute(1, 0)
         cache_values = F.one_hot(torch.cat(cache_values, dim=0)).half()
 
-        torch.save(cache_keys, cfg.CACHE_DIR + '/keys_' + str(cfg.DATA.SHOTS) + "shots.pt") # [num_samples, feat_dim]
-        torch.save(cache_values, cfg.CACHE_DIR + '/values_' + str(cfg.DATA.SHOTS) + "shots.pt") # [num_samples, num_cls]
+        torch.save(cache_keys, cfg.CACHE_DIR + '/keys_' + str(8) + "shots_L14@336px.pt") # [num_samples, feat_dim]
+        torch.save(cache_values, cfg.CACHE_DIR + '/values_' + str(8) + "shots_L14@336px.pt") # [num_samples, num_cls]
 
     else:
-        cache_keys = torch.load(cfg.CACHE_DIR + '/keys_' + str(cfg.DATA.SHOTS) + "shots.pt")
-        cache_values = torch.load(cfg.CACHE_DIR + '/values_' + str(cfg.DATA.SHOTS) + "shots.pt")
+        post_path = path_dic[cfg.MODEL.ARCH]
+        cache_keys = torch.load(cfg.CACHE_DIR + '/keys_' + str(8) + post_path)
+        cache_values = torch.load(cfg.CACHE_DIR + '/values_' + str(8) + post_path)
 
     return cache_keys.to(torch.float32), cache_values.to(torch.float32)
 

@@ -24,8 +24,9 @@ def test(cfg, logger, test_loader, student_model):
 
     use_tip_adapter = cfg.TIP_ADAPTER.USE_TIP_ADAPTER
     if use_tip_adapter:
-        cache_keys = torch.load(cfg.CACHE_DIR + '/keys_' + str(8) + "shots.pt")
-        cache_values = torch.load(cfg.CACHE_DIR + '/values_' + str(8) + "shots.pt")
+        post_path = "shots_L14.pt" if cfg.MODEL.ARCH == "ViT-L/14" else "shots.pt" # TODO 这里要改
+        cache_keys = torch.load(cfg.CACHE_DIR + '/keys_' + str(8) + post_path)
+        cache_values = torch.load(cfg.CACHE_DIR + '/values_' + str(8) + post_path)
         if cfg.DATA.SHOTS != 0:
             '''加载训练好的adapter作为cache_keys的param'''
             pass
@@ -62,7 +63,7 @@ def run_tip_adapter(cfg, logger, cache_keys, cache_values, model, test_loader):
     cache_keys = cache_keys.to(torch.float32)
     clip_weights = model.text_encoder.short_cut.t().to(torch.float32)
     val_data, val_loader = build_dataloader(cfg, logger, loader_type='val')
-    val_features, val_labels, val_logits = pre_load_features(model, val_loader)
+    val_features, val_labels, val_logits = pre_load_features(model, val_loader, cfg)
     val_features = val_features.to(torch.float32)
     # clip_logits = 100. * val_features @ clip_weights
     clip_logits = val_logits
@@ -82,7 +83,7 @@ def run_tip_adapter(cfg, logger, cache_keys, cache_values, model, test_loader):
     print("\n-------- Evaluating on the test set. --------")
 
     # Zero-shot CLIP
-    test_features, test_labels, test_logits = pre_load_features(model, test_loader)
+    test_features, test_labels, test_logits = pre_load_features(model, test_loader, cfg)
     test_features = test_features.to(torch.float32)
     # clip_logits = 100. * test_features @ clip_weights
     clip_logits = test_logits

@@ -1,3 +1,5 @@
+import clip
+
 from models.clip.clip import load
 from utils.logger import create_logger
 from dataset.build import build_dataloader
@@ -11,6 +13,8 @@ from utils.raw_clip_test import raw_clip_train
 from test_net import test
 from utils.tools import save_features
 from script import raw_clip_test
+from models.tip_adapter.utils import build_cache_model
+
 def parse_option():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', '-cfg', required=True, type=str, default='configs/TBAD_L14.yaml')     
@@ -37,6 +41,10 @@ def main(cfg, logger):
     else:
         raw_clip = None
     student_model = xxx_clip(cfg,device,is_teacher=False)
+
+    # clip_model, _ = clip.load('ViT-L/14@336px')
+    # tip_data, tip_loader = build_dataloader(cfg, logger, loader_type='tip')
+    # build_cache_model(cfg, clip_model, tip_loader)
 
     if cfg.DATA.SHOTS != 0:
         # train_data, test_data, val_data, train_loader, test_loader, val_loader = build_dataloader(cfg, logger,is_tip=False)

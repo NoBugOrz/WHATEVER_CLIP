@@ -219,25 +219,26 @@ def save_model(cfg, model):
     '''
     pass
 
-def extract_from_batch_data(batch_data,device):
+def extract_from_batch_data(batch_data,device,cfg):
     '''
     Returns:
         imgs : tensor of shape (bz * num_frames, C, H, W)
         labels : list of shape (bz)
     '''
+    resolution = 336 if cfg.MODEL.ARCH == "ViT-L/14@336px" else 224
     images = batch_data['data']
     images = torch.stack(images)
     images = torch.transpose(images, 0, 1).to(device)  # [bz, num_frames, 1, c, h, w]
-    images = images.squeeze(2).reshape(-1, 3, 224, 224)
+    images = images.squeeze(2).reshape(-1, 3, resolution, resolution)
     label_id = batch_data['label'].to(device) # list[] len=bz
     # label_id = torch.tensor(label_id).to(device)
     return images, label_id
 
-def pre_load_features(model, loader):
+def pre_load_features(model, loader, cfg):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     features, labels, logits = [], [], []
     for i, batch_data in enumerate(tqdm(loader)):
-        images, target = extract_from_batch_data(batch_data, device)  # images: tensor shape=[*, c, h, w],target tensor shape=[bz]
+        images, target = extract_from_batch_data(batch_data, device, cfg)  # images: tensor shape=[*, c, h, w],target tensor shape=[bz]
         images, target = images.cuda(), target.cuda()
 
         with torch.no_grad():
