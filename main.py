@@ -46,17 +46,16 @@ def main(cfg, logger):
     # tip_data, tip_loader = build_dataloader(cfg, logger, loader_type='tip')
     # build_cache_model(cfg, clip_model, tip_loader)
 
+    train_data, train_loader = build_dataloader(cfg, logger, loader_type='train')
+    val_data, val_loader = build_dataloader(cfg, logger, loader_type='val')
+    test_data, test_loader = build_dataloader(cfg, logger, loader_type='test')
+
     if cfg.DATA.SHOTS != 0:
-        # train_data, test_data, val_data, train_loader, test_loader, val_loader = build_dataloader(cfg, logger,is_tip=False)
-        train_data, train_loader = build_dataloader(cfg, logger, loader_type='train')
-        val_data, val_loader = build_dataloader(cfg, logger, loader_type='val')
-        test_data, test_loader = build_dataloader(cfg, logger, loader_type='test')
         train(cfg, logger, train_loader, test_loader, val_loader, student_model, teacher_model=raw_clip)
         test(cfg, logger, test_loader, student_model)
     else:
         '''zero-shot'''
         print('*'*10 ,'zero-shot', '*'*10)
-        test_data, test_loader = build_dataloader(cfg, logger,loader_type='test')
         raw_clip_test(cfg, logger, test_loader)
         # save_features(cfg, raw_clip, test_loader)
         test(cfg, logger, test_loader, raw_clip)

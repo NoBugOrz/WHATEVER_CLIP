@@ -17,6 +17,11 @@ from utils.scheduler import WarmupScheduler
 from utils.tools import pre_load_features
 # torch.autograd.set_detect_anomaly(True)
 
+path_dic = {'ViT-B/16':"shots.pt",
+            'ViT-L/14':"shots_L14.pt",
+            'ViT-L/14@336px':"shots_L14@336px.pt"
+            }
+
 def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader,
                       val_features, val_labels, test_features, test_labels, clip_weights, test_logits):
     '''
@@ -140,16 +145,16 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
         '''
         logger.info('Use tip adapter in training')
         module_list.append('Tip_Adapter')
-        tip_data, tip_loader = build_dataloader(cfg, logger, is_tip=True)
-        raw_clip_model = get_clip(cfg, is_teacher=True)
-        cache_keys, cache_values = build_cache_model(cfg=cfg,clip_model=raw_clip_model,train_loader_cache=tip_loader)
+        post_path = path_dic[cfg.MODEL.ARCH]
+        cache_keys = torch.load(cfg.CACHE_DIR + '/keys_' + str(8) + post_path)
+        cache_values = torch.load(cfg.CACHE_DIR + '/values_' + str(8) + post_path)
 
     student_model.train()
     optimizer = torch.optim.AdamW(student_model.parameters(), lr=cfg.TRAIN.LR, eps=1e-4)
     scheduler = WarmupScheduler(optimizer=optimizer,warmup_epochs=int(cfg.TRAIN.EPOCHS * 0.3),total_epochs=cfg.TRAIN.EPOCHS,
                                 target_lr=cfg.TRAIN.LR,warmup_type='cosine',min_lr=cfg.TRAIN.LR * 0.02)
     # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, cfg.TRAIN.EPOCHS * len(train_loader))
-    criterion = torch.nn.CrossEntropyLoss()
+    criterion = torch.nn.CrossEntropyLoss() if cfg.MODEL.LABEL_SMOOTH == 0 else LabelSmoothingCrossEntropy()
 
     print(f"优化器关联的参数组数量：{len(optimizer.param_groups)}")
 
@@ -210,8 +215,8 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
 
 
     if cfg.TIP_ADAPTER.USE_TIP_ADAPTER == True:
-        val_features, val_labels, val_logits = pre_load_features(student_model, val_loader)  # [num_samples, 512]
-        test_features, test_labels, test_logits = pre_load_features(student_model, test_loader)  # [num_samples, 512]
+        val_features, val_labels, val_logits = pre_load_features(student_model, val_loader, cfg)  # [num_samples, 512]
+        test_features, test_labels, test_logits = pre_load_features(student_model, test_loader, cfg)  # [num_samples, 512]
         clip_weights = student_model.text_encoder.short_cut.t()
         # clip_weights = student_model.text_encoder._forward(student_model.text_encoder._tokens)
         train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader, val_features, val_labels, test_features, test_labels, clip_weights, test_logits) # [num_samples]

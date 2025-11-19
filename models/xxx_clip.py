@@ -299,7 +299,7 @@ class TextEncoder(nn.Module):
 
     def _tokenize(self, class_names):
         if self.config.MODEL.PROMPT:
-            prompted_class_names = ["A teacher " + name  for name in class_names]
+            prompted_class_names = ["A teacher was " + name + '.' for name in class_names]
         else:
             prompted_class_names = [name for name in class_names]
         tokens = [tokenize(name) for name in prompted_class_names]

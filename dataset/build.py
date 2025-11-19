@@ -153,7 +153,7 @@ def build_dataloader(config, logger, loader_type:str):
     print('*'*10, f"building {loader_type} dataset", '*'*10)
     if loader_type == 'test':
         # ann_file = 'dataset/TBAD/test_files/all_names.txt'
-        ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(3)) # 1-12,暂时用1
+        ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(4)) # 1-12,暂时用1
     elif loader_type == 'val':
         ann_file = os.path.join(config.DATA[loader_type.upper() + "_FILE"], '{}_{}shot.txt'.format(loader_type, 8)) # val use 8 shots
     elif loader_type == 'tip':
@@ -181,7 +181,7 @@ def build_dataloader(config, logger, loader_type:str):
         return tip_data, tip_loader
     '''zero-shot'''
     if config.DATA.SHOTS == 0:
-        test_ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(4))  # 1-12,暂时用1
+        test_ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(3))  # 1-12,暂时用1
         # test_ann_file = 'dataset/TBAD/test_files/all_names.txt'
         logger.info(f"testing on {test_ann_file}")
         test_data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=test_ann_file, type='test')
@@ -215,3 +215,28 @@ def build_dataloader(config, logger, loader_type:str):
                               num_workers=12, pin_memory=True, drop_last=True)
 
     return  train_data, test_data, val_data, train_loader , test_loader, val_loader
+
+def split_dataset(dataset):
+    # Step 1: Create a list of indices for each label
+    label_to_indices = defaultdict(list)
+    for idx, batch_data in enumerate(dataset):
+        label = batch_data['label']
+        label_to_indices[label].append(idx)
+
+    # Step 2: Shuffle and split the indices for each label and add them to the new index lists
+    indices1, indices2 = [], []
+    for indices in label_to_indices.values():
+        random.shuffle(indices)  # Shuffle the indices
+        mid = len(indices) // 2
+        if len(indices) % 2 == 1:  # Check if the number of samples is odd
+            indices1.extend(indices[:mid+1])  # If odd, subset1 gets one more sample
+            indices2.extend(indices[mid+1:])  # subset2 gets one less sample
+        else:
+            indices1.extend(indices[:mid])
+            indices2.extend(indices[mid:])
+
+    # Step 3: Create two Subset objects and two DataLoaders
+    subset1 = Subset(dataset, indices1)
+    subset2 = Subset(dataset, indices2)
+
+    return subset1,subset2

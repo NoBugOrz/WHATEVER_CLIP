@@ -11,6 +11,11 @@ from dataset.build import build_dataloader
 from utils.tools import pre_load_features
 from models.tip_adapter.utils import cls_acc, search_hp
 
+path_dic = {'ViT-B/16':"shots.pt",
+            'ViT-L/14':"shots_L14.pt",
+            'ViT-L/14@336px':"shots_L14@336px.pt"
+            }
+
 @torch.no_grad()
 def test(cfg, logger, test_loader, student_model):
     '''
@@ -24,7 +29,7 @@ def test(cfg, logger, test_loader, student_model):
 
     use_tip_adapter = cfg.TIP_ADAPTER.USE_TIP_ADAPTER
     if use_tip_adapter:
-        post_path = "shots_L14.pt" if cfg.MODEL.ARCH == "ViT-L/14" else "shots.pt" # TODO 这里要改
+        post_path = path_dic[cfg.MODEL.ARCH]
         cache_keys = torch.load(cfg.CACHE_DIR + '/keys_' + str(8) + post_path)
         cache_values = torch.load(cfg.CACHE_DIR + '/values_' + str(8) + post_path)
         if cfg.DATA.SHOTS != 0:
@@ -37,7 +42,7 @@ def test(cfg, logger, test_loader, student_model):
     logit_dic = {'model_logits':[]}
     label_list = []
     for idx, batch_data in enumerate(tqdm(test_loader)):
-        images, labels = extract_from_batch_data(batch_data,device) # images: tensor shape=[*, c, h, w],labels: tensor shape=[bz]
+        images, labels = extract_from_batch_data(batch_data,device,cfg) # images: tensor shape=[*, c, h, w],labels: tensor shape=[bz]
         # save_image(images, 'images/')
         image_features, text_features, logits = student_model(images)
 
@@ -88,7 +93,7 @@ def run_tip_adapter(cfg, logger, cache_keys, cache_values, model, test_loader):
     # clip_logits = 100. * test_features @ clip_weights
     clip_logits = test_logits
     acc = cls_acc(clip_logits, test_labels)
-    print("\n**** Zero-shot CLIP's test accuracy: {:.2f}. ****\n".format(acc))
+    logger.info("\n**** Zero-shot CLIP's test accuracy: {:.2f}. ****\n".format(acc))
 
     # Tip-Adapter    
     affinity = test_features @ cache_keys
@@ -103,5 +108,3 @@ def run_tip_adapter(cfg, logger, cache_keys, cache_values, model, test_loader):
                 f"acc5: {acc5}\n"
                 f"auc: {auc}\n"
                 f"f1: {f1}\n")
-    acc = cls_acc(tip_logits, test_labels)
-    print("**** Tip-Adapter's test accuracy: {:.2f}. ****\n".format(acc))

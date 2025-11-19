@@ -20,7 +20,7 @@ def load_class_names(json_file):
     '''
     with open(json_file, 'r', encoding='utf-8') as f:
         data_dict = json.load(f)
-    return [v for k,v in data_dict.items()]
+    return [ v for k,v in data_dict.items()]
 
 def raw_clip_test(cfg, logger, loader):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
