@@ -61,6 +61,7 @@ def main(cfg, logger):
         test(cfg, logger, test_loader, raw_clip)
 
 if __name__ == '__main__':
+    torch.cuda.empty_cache()
     args, cfg = parse_option()
     logger = create_logger('logs')
     logger.info("Running with config:")

@@ -55,7 +55,7 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, trai
         print('Train Epoch: {:} / {:}'.format(train_idx, cfg.TIP_ADAPTER.TRAIN_EPOCH))
 
         for i, batch_data in enumerate(tqdm(train_loader)):
-            images, target = extract_from_batch_data(batch_data, device)  # images: tensor shape=[*, c, h, w],target tensor shape=[bz]
+            images, target = extract_from_batch_data(batch_data, device, cfg)  # images: tensor shape=[*, c, h, w],target tensor shape=[bz]
             images, target = images.cuda(), target.cuda()
 
             with torch.no_grad():
@@ -173,7 +173,7 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
         loss_list = []
         acc_dic = {'acc1':[], 'acc3':[], 'acc5':[]}
         for idx, batch_data in enumerate(train_loader):
-            images, labels = extract_from_batch_data(batch_data,device) # images: tensor shape=[*, c, h, w],labels tensor shape=[bz]
+            images, labels = extract_from_batch_data(batch_data,device,cfg) # images: tensor shape=[*, c, h, w],labels tensor shape=[bz]
             image_features, text_features, logits = student_model(images)
             probs = logits.softmax(dim=-1)
             acc1, acc3, acc5 = validate(probs, labels,acc_only=True)
@@ -199,7 +199,7 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
             student_model.eval()
             val_acc_dic = {'acc1': [], 'acc3': [], 'acc5': []}
             for idx, batch_data in enumerate(test_loader):
-                images, labels = extract_from_batch_data(batch_data,device)
+                images, labels = extract_from_batch_data(batch_data,device,cfg)
                 image_features, text_features, logits = student_model(images)
                 probs = logits.softmax(dim=-1)
                 val_acc1, val_acc3, val_acc5 = validate(probs, labels, acc_only=True)
