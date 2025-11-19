@@ -146,8 +146,8 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
         logger.info('Use tip adapter in training')
         module_list.append('Tip_Adapter')
         post_path = path_dic[cfg.MODEL.ARCH]
-        cache_keys = torch.load(cfg.CACHE_DIR + '/keys_' + str(8) + post_path)
-        cache_values = torch.load(cfg.CACHE_DIR + '/values_' + str(8) + post_path)
+        cache_keys = torch.load(cfg.CACHE_DIR + '/keys_' + str(8) + post_path).to(torch.float16)
+        cache_values = torch.load(cfg.CACHE_DIR + '/values_' + str(8) + post_path).to(torch.float16)
 
     student_model.train()
     optimizer = torch.optim.AdamW(student_model.parameters(), lr=cfg.TRAIN.LR, eps=1e-4)

@@ -313,7 +313,7 @@ class TextEncoder(nn.Module):
         if self.is_teacher:
             logit_scale = 100.
         logits = logit_scale * image_features @ text_features.t()
-        return text_features, logits
+        return text_features.to(self.dtype), logits.to(self.dtype)
 
     def _forward(self, text):
         x = self.clip_model.token_embedding(text).type(self.dtype)  # [batch_size, n_ctx, d_model]
@@ -328,7 +328,7 @@ class TextEncoder(nn.Module):
         # take features from the eot embedding (eot_token is the highest number in each sequence)
         x = x[torch.arange(x.shape[0]), text.argmax(dim=-1)] @ self.clip_model.text_projection
 
-        return x.to(torch.float32)
+        return x.to(self.dtype)
 
 
 
@@ -357,7 +357,7 @@ class ImageEncoder(nn.Module):
         video_encode = self.clip_model.encode_image(x)
         video_encode = video_encode / video_encode.norm(dim=-1, keepdim=True)
         video_encode = video_encode.reshape(-1, self.num_frames, self.output_dim) # shape = [bz, num_frames, output_dim]
-        return video_encode
+        return video_encode.to(self.dtype)
 
 
 def get_clip(cfg,is_teacher=False):
