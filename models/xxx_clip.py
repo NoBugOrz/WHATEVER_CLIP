@@ -78,7 +78,7 @@ class AttentionBlock(nn.Module):
         return x
 
 class SpatioTemporalAggregator(nn.Module):
-    def __init__(self, feature_dim, num_attention_blocks, device='cuda', hidden_dim=None, num_heads=8, dropout=0.1):
+    def __init__(self, dtype, feature_dim, num_attention_blocks, device='cuda', hidden_dim=None, num_heads=8, dropout=0.1):
         """
             feature_dim: 输入输出特征维度
             hidden_dim: 隐藏层维度，默认与feature_dim相同
@@ -86,6 +86,7 @@ class SpatioTemporalAggregator(nn.Module):
             dropout: dropout概率
         """
         super().__init__()
+        self.dtype = dtype
         self.feature_dim = feature_dim
         self.hidden_dim = hidden_dim if hidden_dim is not None else feature_dim
         self.device = device
@@ -101,7 +102,6 @@ class SpatioTemporalAggregator(nn.Module):
             ),
             QuickGELU(),
             nn.Dropout(dropout),
-
             nn.Conv1d(
                 in_channels=self.hidden_dim,
                 out_channels=self.hidden_dim,
@@ -139,40 +139,23 @@ class SpatioTemporalAggregator(nn.Module):
         self._initialize_weights()
 
     def _initialize_weights(self):
-        # 1. 卷积层初始化 - 使用Kaiming初始化（适合ReLU激活）
         for m in self.st_feature_extractor:
             if isinstance(m, nn.Conv1d):
-                # 针对ReLU激活的Kaiming正态分布初始化
                 kaiming_normal_(m.weight, mode='fan_in', nonlinearity='relu')
                 if m.bias is not None:
                     constant_(m.bias, 0.0)  # 偏置初始化为0
 
-        # 2. 注意力池化层初始化
         for m in self.time_attention:
             if isinstance(m, nn.Linear):
-                # 针对Tanh激活使用Xavier初始化
                 xavier_normal_(m.weight, gain=0.5)
                 if m.bias is not None:
                     constant_(m.bias, 0.0)
 
-        # # 3. 多头注意力参数初始化
-        # # 对查询/键/值投影矩阵使用特殊初始化
-        # for block in self.attention:
-        #     for name, param in block.named_parameters():
-        #         if 'weight' in name:
-        #             # 注意力机制权重使用较小的初始化范围
-        #             xavier_normal_(param, gain=0.02)
-        #         elif 'bias' in name:
-        #             constant_(param, 0.0)
-
-        # 4. 输出投影层初始化
         if isinstance(self.output_proj, nn.Linear):
-            # 保持输出尺度与输入一致
             xavier_normal_(self.output_proj.weight, gain=0.5)
             if self.output_proj.bias is not None:
                 constant_(self.output_proj.bias, 0.0)
 
-        # 5. LayerNorm初始化 - 权重为1，偏置为0（保证初始不改变输入）
         for m in [self.post_conv_norm, self.norm]:
             if isinstance(m, nn.LayerNorm):
                 constant_(m.weight, 1.0)
@@ -207,7 +190,7 @@ class SpatioTemporalAggregator(nn.Module):
         # project to output dim
         global_feature = self.output_proj(global_feature)
 
-        return global_feature.to(torch.float32)
+        return global_feature.to(self.dtype)
 
 
 
@@ -232,7 +215,8 @@ class xxx_clip(nn.Module):
                 v.requires_grad = False
 
         if not self.is_teacher:
-            self.spatial_temporal_module = SpatioTemporalAggregator(feature_dim=self.output_dim,
+            self.spatial_temporal_module = SpatioTemporalAggregator(dtype=self.clip.dtype,
+                                                                    feature_dim=self.output_dim,
                                                                     num_attention_blocks=2,
                                                                     device=self.device,
                                                                     hidden_dim=self.output_dim,
@@ -262,9 +246,9 @@ class xxx_clip(nn.Module):
         '''
         if self.is_teacher:
             image_encode = image_encode.mean(dim=1) # shape [bz, feat_dim]
-            return image_encode
+            return image_encode.to(self.clip.dtype)
         else:
-            return image_encode # shape[bz, n_f, feat_dim]
+            return image_encode.to(self.clip.dtype) # shape[bz, n_f, feat_dim]
 
     def forward(self, img):
         '''
@@ -275,7 +259,7 @@ class xxx_clip(nn.Module):
         '''
         image_features = self.encode_image(img)
         if self.is_teacher:
-            text_features, logits = self.text_encoder(image_features.to(torch.float32))
+            text_features, logits = self.text_encoder(image_features)
             return image_features, text_features, logits
         image_features = self.spatial_temporal_module(image_features)
         text_features, logits = self.text_encoder(image_features)

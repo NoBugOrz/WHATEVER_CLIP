@@ -14,7 +14,7 @@ DATA:
     SHOTS: 8
     PRELOAD_CACHE_DIR: 'cache/preload_feat'
 MODEL:
-    ARCH: ViT-L/14@336px
+    ARCH: ViT-L/14@336px # ViT-B/16
     YOLO: 'Yolo-model/yolov8n.pt'
     IF_TEACHER: 0
     ZS: 0
@@ -26,7 +26,7 @@ MODEL:
 TRAIN:
     BATCH_SIZE: 2 # BS 64
     ACCUMULATION_STEPS: 2
-    EPOCHS: 10
+    EPOCHS: 21
     LR: 0.0001
 TEXT_PROMPT:
     N_CTX_PRE: 8
@@ -36,12 +36,12 @@ TEXT_PROMPT:
 TIP_ADAPTER:
     USE_TIP_ADAPTER: 1
     INIT_ALPHA: 1
-    INIT_BETA: 3
+    INIT_BETA: 5
   # if loading cached kv
     LOAD_CACHE: 1
 
     AUG_EPOCH: 30
-    TRAIN_EPOCH: 1
+    TRAIN_EPOCH: 10
 
     SEARCH_HP: True
     SEARCH_SCALE: [12, 5]

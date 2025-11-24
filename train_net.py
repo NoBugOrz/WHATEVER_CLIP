@@ -23,13 +23,17 @@ path_dic = {'ViT-B/16':"shots.pt",
             }
 
 def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader,
-                      val_features, val_labels, test_features, test_labels, clip_weights, test_logits):
+                      val_features, val_labels, test_features, test_labels, clip_weights, test_logits, val_logits):
     '''
     train and save tip_adapter model
     cache_keys: tensor shape=[512, 8]
     cache_values: tensor shape=[8, 8]
     '''
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    clip_logits = val_logits
+    acc = cls_acc(clip_logits, val_labels)
+    print("\n**** Zero-shot CLIP's val accuracy: {:.2f}. ****\n".format(acc))
 
     adapter = nn.Linear(cache_keys.shape[0], cache_keys.shape[1], bias=False).to(student_model.dtype).cuda() # in_dim=512, out_dim=8
     adapter.weight = nn.Parameter(cache_keys.t())
@@ -123,7 +127,6 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, trai
     print("**** tip_adapter-F's test accuracy: {:.2f}. ****\n".format(max(best_acc, acc)))
 
 
-
 def train(cfg, logger, train_loader, test_loader, val_loader, student_model, teacher_model=None):
     '''
     Training the student model on the given dataset.
@@ -148,6 +151,11 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
         post_path = path_dic[cfg.MODEL.ARCH]
         cache_keys = torch.load(cfg.CACHE_DIR + '/keys_' + str(8) + post_path).to(torch.float16)
         cache_values = torch.load(cfg.CACHE_DIR + '/values_' + str(8) + post_path).to(torch.float16)
+        adapter = nn.Linear(cache_keys.shape[0], cache_keys.shape[1], bias=False).to(
+            student_model.dtype).cuda()  # in_dim=512, out_dim=8
+        adapter.weight = nn.Parameter(cache_keys.t())
+        beta, alpha = cfg.TIP_ADAPTER.INIT_BETA, cfg.TIP_ADAPTER.INIT_ALPHA
+        # beta, alpha = torch.nn.Parameter(torch.tensor(1.)), torch.nn.Parameter(torch.tensor(1.))
 
     student_model.train()
     optimizer = torch.optim.AdamW(student_model.parameters(), lr=cfg.TRAIN.LR, eps=1e-4)
@@ -175,6 +183,11 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
         for idx, batch_data in enumerate(train_loader):
             images, labels = extract_from_batch_data(batch_data,device,cfg) # images: tensor shape=[*, c, h, w],labels tensor shape=[bz]
             image_features, text_features, logits = student_model(images)
+            '''from tip adapter'''
+            affinity = adapter(image_features)
+            cache_logits = ((-1) * (beta - beta * affinity)).exp() @ cache_values
+            logits = logits + cache_logits * alpha
+            '''end'''
             probs = logits.softmax(dim=-1)
             acc1, acc3, acc5 = validate(probs, labels,acc_only=True)
             acc_dic['acc1'].append(acc1)
@@ -198,7 +211,7 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
         if cur_epoch % 5 == 0:
             student_model.eval()
             val_acc_dic = {'acc1': [], 'acc3': [], 'acc5': []}
-            for idx, batch_data in enumerate(test_loader):
+            for idx, batch_data in enumerate(val_loader):
                 images, labels = extract_from_batch_data(batch_data,device,cfg)
                 image_features, text_features, logits = student_model(images)
                 probs = logits.softmax(dim=-1)
@@ -219,4 +232,4 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
         test_features, test_labels, test_logits = pre_load_features(student_model, test_loader, cfg)  # [num_samples, 512]
         clip_weights = student_model.text_encoder.short_cut.t()
         # clip_weights = student_model.text_encoder._forward(student_model.text_encoder._tokens)
-        train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader, val_features, val_labels, test_features, test_labels, clip_weights, test_logits) # [num_samples]
+        train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader, val_features, val_labels, test_features, test_labels, clip_weights, test_logits, val_logits) # [num_samples]

@@ -232,7 +232,7 @@ def extract_from_batch_data(batch_data,device,cfg):
     images = images.squeeze(2).reshape(-1, 3, resolution, resolution)
     label_id = batch_data['label'].to(device) # list[] len=bz
     # label_id = torch.tensor(label_id).to(device)
-    return images, label_id
+    return images.to(torch.float16), label_id
 
 def pre_load_features(model, loader, cfg):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
