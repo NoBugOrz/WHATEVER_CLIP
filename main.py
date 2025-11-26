@@ -1,5 +1,5 @@
 import clip
-
+import torch.nn as nn
 from models.clip.clip import load
 from utils.logger import create_logger
 from dataset.build import build_dataloader
@@ -14,6 +14,19 @@ from test_net import test
 from utils.tools import save_features
 from script import raw_clip_test
 from models.tip_adapter.utils import build_cache_model
+import torch.distributed as dist
+import sys
+
+def setup(rank, world_size):
+    dist.init_process_group(
+        backend="nccl",
+        init_method="env://",
+        rank=rank,
+        world_size=world_size
+    )
+
+def cleanup():
+    dist.destroy_process_group()
 
 def parse_option():
     parser = argparse.ArgumentParser()
@@ -34,7 +47,21 @@ def parse_option():
     return args, config
 
 def main(cfg, logger):
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    n_gpus = torch.cuda.device_count()
+    print(f"可用GPU数量: {n_gpus}")
+    if n_gpus > 1:
+        assert n_gpus == cfg.TRAIN.NUM_GPUS
+        '''setting up multi GPU training'''
+        rank = int(os.environ["RANK"])
+        world_size = int(os.environ["WORLD_SIZE"])
+
+        setup(rank, world_size)
+
+        torch.cuda.set_device(rank)
+        device = torch.device("cuda", rank)
+        '''end'''
+    else:
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     if cfg.MODEL.USE_DISTILLATION:
         raw_clip = xxx_clip(cfg,device,is_teacher=True)

@@ -14,6 +14,8 @@ import os
 from torch.utils.data import Dataset
 from abc import ABCMeta, abstractmethod
 from models.xxx_clip import load_class_names
+from torch.utils.data import DataLoader, DistributedSampler
+
 
 class BaseDataset(Dataset, metaclass=ABCMeta):
     def __init__(self,config,preprocess,device,ann_file,shot=0,type = 'train'):
@@ -153,7 +155,7 @@ def build_dataloader(config, logger, loader_type:str):
     print('*'*10, f"building {loader_type} dataset", '*'*10)
     if loader_type == 'test':
         # ann_file = 'dataset/TBAD/test_files/all_names.txt'
-        ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(4)) # 1-12,暂时用1
+        ann_file = os.path.join(config.DATA.TEST_FILE, "test_reordered_part{}.txt".format(5)) # 1-12,暂时用1
     elif loader_type == 'val':
         ann_file = os.path.join(config.DATA[loader_type.upper() + "_FILE"], '{}_{}shot.txt'.format(loader_type, 8)) # val use 8 shots
     elif loader_type == 'tip':
@@ -162,11 +164,20 @@ def build_dataloader(config, logger, loader_type:str):
     else:
         ann_file = os.path.join(config.DATA[loader_type.upper() + "_FILE"], '{}_{}shot.txt'.format(loader_type, config.DATA.SHOTS))
     logger.info("Building {} dataset on data from path {}".format(loader_type, ann_file))
-    data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=ann_file,
-                        shot=config.DATA.SHOTS, type='train' if loader_type == 'train' else 'test')
-    sampler = SubsetRandomSampler(np.arange(len(data)))
-    loader = DataLoader(data, batch_size=config.TRAIN.BATCH_SIZE, sampler=sampler,
-                        num_workers=12, pin_memory=True, drop_last=True)
+    if config.TRAIN.NUM_GPUS > 1:
+        rank = int(os.environ["RANK"])
+        world_size = int(os.environ["WORLD_SIZE"])
+        data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=ann_file,
+                            shot=config.DATA.SHOTS, type='train' if loader_type == 'train' else 'test')
+        sampler = DistributedSampler(data, num_replicas=world_size, rank=rank)
+        loader = DataLoader(data, batch_size=config.TRAIN.BATCH_SIZE, sampler=sampler,
+                            num_workers=12, pin_memory=True, drop_last=True)
+    else:
+        data = VideoDataset(config, preprocess=preprocess, device=device, ann_file=ann_file,
+                            shot=config.DATA.SHOTS, type='train' if loader_type == 'train' else 'test')
+        sampler = SubsetRandomSampler(np.arange(len(data)))
+        loader = DataLoader(data, batch_size=config.TRAIN.BATCH_SIZE, sampler=sampler,
+                            num_workers=12, pin_memory=True, drop_last=True)
     return data, loader
 
     '''tip adapter'''

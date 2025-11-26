@@ -91,9 +91,11 @@ def pre_load_features(cfg, split, clip_model, loader):
     return features, labels
 
 
-def search_hp(cfg, cache_keys, cache_values, features, labels, clip_weights, adapter=None):
+def search_hp(cfg, cache_keys, cache_values, features, labels, clip_weights, adapter=None, device='cpu'):
     if cfg.TIP_ADAPTER.SEARCH_HP == True:
-
+        features = features.to(device)
+        adapter = adapter.to(device)
+        clip_weights = clip_weights.to(device)
         beta_list = [i * (cfg.TIP_ADAPTER.SEARCH_SCALE[0] - 0.1) / cfg.TIP_ADAPTER.SEARCH_STEP[0] + 0.1 for i in
                      range(cfg.TIP_ADAPTER.SEARCH_STEP[0])]
         alpha_list = [i * (cfg.TIP_ADAPTER.SEARCH_SCALE[1] - 0.1) / cfg.TIP_ADAPTER.SEARCH_STEP[1] + 0.1 for i in

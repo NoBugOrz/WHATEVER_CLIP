@@ -280,6 +280,23 @@ class TextEncoder(nn.Module):
         self.short_cut = self.short_cut / norm
         self.logit_scale = nn.Parameter(torch.ones([]) * np.log(1 / 0.07))
         self.is_teacher = is_teacher
+        self.feature_dim = self.clip_model.visual.output_dim
+        if not self.is_teacher:
+            self.adapter = nn.Sequential(
+                nn.Linear(self.feature_dim, self.feature_dim * 2),
+                QuickGELU(),
+                nn.Linear(self.feature_dim * 2, self.feature_dim)
+            ).to(self.device, dtype=self.dtype)
+            self.init_adapter_param()
+        else:
+            self.adapter = None
+
+    def init_adapter_param(self):
+        for m in self.adapter:
+            if isinstance(m, nn.Linear):
+                xavier_normal_(m.weight, gain=0.5)
+                if m.bias is not None:
+                    constant_(m.bias, 0.0)
 
     def _tokenize(self, class_names):
         if self.config.MODEL.PROMPT:
@@ -294,8 +311,12 @@ class TextEncoder(nn.Module):
         text_features = self._forward(self._tokens)
         text_features = text_features / text_features.norm(dim=-1, keepdim=True)
         logit_scale = self.logit_scale.exp()
-        if self.is_teacher:
-            logit_scale = 100.
+        if self.adapter is not None:
+            x = text_features
+            text_features = self.adapter(text_features)
+            text_features = text_features + x
+        # if self.is_teacher:
+        #     logit_scale = 100.
         logits = logit_scale * image_features @ text_features.t()
         return text_features.to(self.dtype), logits.to(self.dtype)
 

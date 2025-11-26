@@ -15,6 +15,9 @@ from models.tip_adapter.utils import cls_acc,search_hp
 from models.xxx_clip import get_clip
 from utils.scheduler import WarmupScheduler
 from utils.tools import pre_load_features
+from torch.nn.parallel import DistributedDataParallel as DDP
+import os
+
 # torch.autograd.set_detect_anomaly(True)
 
 path_dic = {'ViT-B/16':"shots.pt",
@@ -22,14 +25,13 @@ path_dic = {'ViT-B/16':"shots.pt",
             'ViT-L/14@336px':"shots_L14@336px.pt"
             }
 
-def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader,
+def train_tip_adapter(cfg, logger, device, cache_keys, cache_values, student_model, train_loader,
                       val_features, val_labels, test_features, test_labels, clip_weights, test_logits, val_logits):
     '''
     train and save tip_adapter model
     cache_keys: tensor shape=[512, 8]
     cache_values: tensor shape=[8, 8]
     '''
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     clip_logits = val_logits
     acc = cls_acc(clip_logits, val_labels)
@@ -115,7 +117,7 @@ def train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, trai
 
     # Search Hyperparameters
     best_beta, best_alpha = search_hp(cfg, cache_keys, cache_values, val_features, val_labels, clip_weights,
-                                      adapter=adapter)
+                                      adapter=adapter, device=device)
 
     print("\n-------- Evaluating on the test set. --------")
 
@@ -133,6 +135,15 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
     '''
     logger.info('training model on data from path:{}'.format(cfg.DATA.TRAIN_FILE))
 
+    batch_size = cfg.TRAIN.BATCH_SIZE
+    num_frames = cfg.DATA.NUM_FRAMES
+    if cfg.TRAIN.NUM_GPUS > 1:
+        rank = int(os.environ["LOCAL_RANK"])
+        torch.cuda.set_device(rank)
+        device = torch.device("cuda", rank)
+    else:
+        device = torch.device("cuda")
+
     module_list = []
     if student_model.spatial_temporal_module is not None:
         module_list.append('spatial_temporal_module')
@@ -149,6 +160,7 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
         logger.info('Use tip adapter in training')
         module_list.append('Tip_Adapter')
         post_path = path_dic[cfg.MODEL.ARCH]
+        clip_weights = student_model.text_encoder.short_cut.t()
         cache_keys = torch.load(cfg.CACHE_DIR + '/keys_' + str(8) + post_path).to(torch.float16)
         cache_values = torch.load(cfg.CACHE_DIR + '/values_' + str(8) + post_path).to(torch.float16)
         adapter = nn.Linear(cache_keys.shape[0], cache_keys.shape[1], bias=False).to(
@@ -158,35 +170,44 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
         # beta, alpha = torch.nn.Parameter(torch.tensor(1.)), torch.nn.Parameter(torch.tensor(1.))
 
     student_model.train()
+    student_model = student_model.to(device)
+    if cfg.TRAIN.NUM_GPUS > 1:
+        student_model = DDP(student_model, device_ids=[rank])
+
+    student_model.train()
     optimizer = torch.optim.AdamW(student_model.parameters(), lr=cfg.TRAIN.LR, eps=1e-4)
     scheduler = WarmupScheduler(optimizer=optimizer,warmup_epochs=int(cfg.TRAIN.EPOCHS * 0.3),total_epochs=cfg.TRAIN.EPOCHS,
                                 target_lr=cfg.TRAIN.LR,warmup_type='cosine',min_lr=cfg.TRAIN.LR * 0.02)
     # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, cfg.TRAIN.EPOCHS * len(train_loader))
     criterion = torch.nn.CrossEntropyLoss() if cfg.MODEL.LABEL_SMOOTH == 0 else LabelSmoothingCrossEntropy()
 
-    print(f"优化器关联的参数组数量：{len(optimizer.param_groups)}")
-
-    batch_size = cfg.TRAIN.BATCH_SIZE
-    num_frames = cfg.DATA.NUM_FRAMES
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-
     logger.info('total trainable parameters:')
     for k,v in student_model.named_parameters():
         if v.requires_grad:
             print(k)
 
+    best_alpha, best_beta = 1.59, 4.75
+
     for cur_epoch in range(cfg.TRAIN.EPOCHS):
         student_model.train()
+        train_loader.sampler.set_epoch(cur_epoch)
         loss_list = []
+        distillation_loss_list = []
         acc_dic = {'acc1':[], 'acc3':[], 'acc5':[]}
         for idx, batch_data in enumerate(train_loader):
             images, labels = extract_from_batch_data(batch_data,device,cfg) # images: tensor shape=[*, c, h, w],labels tensor shape=[bz]
             image_features, text_features, logits = student_model(images)
+            '''add distillation here'''
+            if teacher_model is not None:
+                teacher_image_features, teacher_text_features, teacher_logits = teacher_model(images)
+                distillation_loss_1 = 1 - F.cosine_similarity(image_features, teacher_image_features, dim=-1).mean()
+                distillation_loss_2 = 1 - F.cosine_similarity(text_features, teacher_text_features, dim=-1).mean()
+                distillation_loss = distillation_loss_1 + distillation_loss_2
+
             '''from tip adapter'''
             affinity = adapter(image_features)
-            cache_logits = ((-1) * (beta - beta * affinity)).exp() @ cache_values
-            logits = logits + cache_logits * alpha
+            cache_logits = ((-1) * (best_beta - best_beta * affinity)).exp() @ cache_values
+            logits = logits + cache_logits * best_alpha
             '''end'''
             probs = logits.softmax(dim=-1)
             acc1, acc3, acc5 = validate(probs, labels,acc_only=True)
@@ -194,8 +215,10 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
             acc_dic['acc3'].append(acc3)
             acc_dic['acc5'].append(acc5)
             loss = criterion(logits, labels)
+            loss += distillation_loss * 0.2
 
             loss_list.append(loss.item())
+            distillation_loss_list.append(distillation_loss.item())
 
             optimizer.zero_grad()
             loss.backward()
@@ -203,6 +226,7 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
             scheduler.step()
         if cur_epoch % 5 == 0:
             logger.info(f"In epoch:{cur_epoch}, loss: {torch.tensor(loss_list).mean().item()}"
+                        f" distillation loss: {torch.tensor(distillation_loss_list).mean().item()},"
                         f" acc1: {np.array(acc_dic['acc1']).mean():.4f},"
                         f" acc3: {np.array(acc_dic['acc3']).mean():.4f},"
                         f" acc5: {np.array(acc_dic['acc5']).mean():.4f}")
@@ -230,6 +254,5 @@ def train(cfg, logger, train_loader, test_loader, val_loader, student_model, tea
     if cfg.TIP_ADAPTER.USE_TIP_ADAPTER == True:
         val_features, val_labels, val_logits = pre_load_features(student_model, val_loader, cfg)  # [num_samples, 512]
         test_features, test_labels, test_logits = pre_load_features(student_model, test_loader, cfg)  # [num_samples, 512]
-        clip_weights = student_model.text_encoder.short_cut.t()
         # clip_weights = student_model.text_encoder._forward(student_model.text_encoder._tokens)
-        train_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, train_loader, val_features, val_labels, test_features, test_labels, clip_weights, test_logits, val_logits) # [num_samples]
+        train_tip_adapter(cfg, logger, device, cache_keys, cache_values, student_model, train_loader, val_features, val_labels, test_features, test_labels, clip_weights, test_logits, val_logits) # [num_samples]

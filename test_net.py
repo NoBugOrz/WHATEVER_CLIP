@@ -10,6 +10,11 @@ from utils.tools import extract_from_batch_data
 from dataset.build import build_dataloader
 from utils.tools import pre_load_features
 from models.tip_adapter.utils import cls_acc, search_hp
+import torch.nn as nn
+import os
+'''
+after multiple testing, in zero-shot, the best alpha and beta is [1.59, 4.75], yield acc1: 48, acc3:71, acc5:80
+'''
 
 path_dic = {'ViT-B/16':"shots.pt",
             'ViT-L/14':"shots_L14.pt",
@@ -25,7 +30,12 @@ def test(cfg, logger, test_loader, student_model):
     student_model.eval()
     batch_size = cfg.TRAIN.BATCH_SIZE
     num_frames = cfg.DATA.NUM_FRAMES
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    if cfg.TRAIN.NUM_GPUS > 1:
+        rank = int(os.environ["LOCAL_RANK"])
+        torch.cuda.set_device(rank)
+        device = torch.device("cuda", rank)
+    else:
+        device = torch.device("cuda")
 
     use_tip_adapter = cfg.TIP_ADAPTER.USE_TIP_ADAPTER
     if use_tip_adapter:
@@ -36,7 +46,7 @@ def test(cfg, logger, test_loader, student_model):
             '''加载训练好的adapter作为cache_keys的param'''
             pass
         else:
-            run_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, test_loader)
+            run_tip_adapter(cfg, logger, cache_keys, cache_values, student_model, test_loader, device)
 
 
     logit_dic = {'model_logits':[]}
@@ -61,7 +71,7 @@ def test(cfg, logger, test_loader, student_model):
                 f"f1: {f1}\n")
 
 @torch.no_grad()
-def run_tip_adapter(cfg, logger, cache_keys, cache_values, model, test_loader):
+def run_tip_adapter(cfg, logger, cache_keys, cache_values, model, test_loader, device):
     '''run tip adapter. non-trainable adapter'''
     print("*"*10, "running tip adapter", "*"*10)
     cache_values = cache_values.to(torch.float32)
@@ -70,20 +80,23 @@ def run_tip_adapter(cfg, logger, cache_keys, cache_values, model, test_loader):
     val_data, val_loader = build_dataloader(cfg, logger, loader_type='val')
     val_features, val_labels, val_logits = pre_load_features(model, val_loader, cfg)
     val_features = val_features.to(torch.float32)
+    adapter = nn.Linear(cache_keys.shape[0], cache_keys.shape[1], bias=False).cuda()  # in_dim=512, out_dim=8
+    adapter.weight = nn.Parameter(cache_keys.t())
+    adapter = adapter.eval()
     # clip_logits = 100. * val_features @ clip_weights
     clip_logits = val_logits
     acc = cls_acc(clip_logits, val_labels)
     print("\n**** Zero-shot CLIP's val accuracy: {:.2f}. ****\n".format(acc))
 
     beta, alpha = cfg.TIP_ADAPTER.INIT_BETA, cfg.TIP_ADAPTER.INIT_ALPHA
-    affinity = val_features @ cache_keys
+    affinity = adapter(val_features)
     cache_logits = ((-1) * (beta - beta * affinity)).exp() @ cache_values
 
     tip_logits = clip_logits + cache_logits * alpha
     acc = cls_acc(tip_logits, val_labels)
     print("**** Tip-Adapter's val accuracy: {:.2f}. ****\n".format(acc))
     # Search Hyperparameters
-    best_beta, best_alpha = search_hp(cfg, cache_keys, cache_values, val_features, val_labels, clip_weights)
+    best_beta, best_alpha = search_hp(cfg, cache_keys, cache_values, val_features, val_labels, clip_weights, adapter=adapter, device=device)
 
     print("\n-------- Evaluating on the test set. --------")
 

@@ -61,6 +61,7 @@ _C.TRAIN.OPTIMIZER = 'adamw'
 _C.TRAIN.OPT_LEVEL = 'O1'
 _C.TRAIN.AUTO_RESUME = 0
 _C.TRAIN.USE_CHECKPOINT = 0
+_C.TRAIN.NUM_GPUS = 1
 # -----------------------------------------------------------------------------
 # Text Prompt Settings
 # -----------------------------------------------------------------------------
