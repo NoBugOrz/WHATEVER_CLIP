@@ -53,7 +53,7 @@ def test(cfg, logger, test_loader, student_model):
     label_list = []
     for idx, batch_data in enumerate(tqdm(test_loader)):
         images, labels = extract_from_batch_data(batch_data,device,cfg) # images: tensor shape=[*, c, h, w],labels: tensor shape=[bz]
-        # save_image(images, 'images/')
+        save_image(images, 'images/')
         image_features, text_features, logits = student_model(images)
 
         label_list.append(labels)
